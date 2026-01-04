@@ -1,0 +1,374 @@
+<!doctype html>
+<html lang="ja">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>家計拠出＆お小遣い計算</title>
+  <style>
+    :root { --b:#e8e8e8; --bg:#fafafa; }
+    body { font-family: system-ui, -apple-system, "Hiragino Sans", "Noto Sans JP", sans-serif; margin: 0; background: #fff; color:#111; }
+    .wrap { max-width: 980px; margin: 0 auto; padding: 18px; }
+    h1 { font-size: 20px; margin: 0 0 12px; }
+    .grid { display: grid; grid-template-columns: 1fr; gap: 12px; }
+    @media (min-width: 900px) { .grid { grid-template-columns: 1fr 1fr; } }
+    .card { border: 1px solid var(--b); border-radius: 14px; padding: 14px; background: #fff; }
+    .card h2 { font-size: 16px; margin: 0 0 10px; }
+    .row { display: grid; grid-template-columns: 170px 1fr; gap: 10px; align-items: center; margin: 8px 0; }
+    .row label { font-size: 13px; color: #333; }
+    input[type="number"], input[type="text"] {
+      width: 100%; padding: 10px 12px; border: 1px solid var(--b);
+      border-radius: 10px; font-size: 16px;
+    }
+    input[type="number"]::-webkit-outer-spin-button,
+    input[type="number"]::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
+    input[type="number"] { -moz-appearance: textfield; }
+    .toggle { display:flex; align-items:center; gap:8px; }
+    .toggle input { width: 18px; height: 18px; }
+    .result { margin-top: 12px; background: var(--bg); border: 1px solid var(--b); border-radius: 14px; padding: 12px; }
+    .kv { display:flex; justify-content: space-between; gap: 10px; padding: 6px 0; border-bottom: 1px dashed #ddd; }
+    .kv:last-child { border-bottom: none; }
+    .k { color:#444; font-size: 13px; }
+    .v { font-variant-numeric: tabular-nums; font-weight: 600; }
+    .err { color: #b00020; font-size: 13px; margin-top: 10px; }
+    .sum { margin-top: 12px; }
+    .actions { display:flex; flex-wrap: wrap; gap: 10px; margin-top: 12px; }
+    button {
+      padding: 10px 12px; border: 1px solid var(--b); border-radius: 12px;
+      background: #fff; font-size: 15px; cursor: pointer;
+    }
+    button.primary { background: #111; color: #fff; border-color: #111; }
+    textarea { width:100%; min-height: 210px; padding: 12px; border: 1px solid var(--b); border-radius: 12px; font-size: 13px; }
+    .hint { font-size: 12px; color:#666; margin-top: 6px; }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <h1>手取り入力 → 家計拠出＆お小遣い算出</h1>
+
+    <div class="card" style="margin-bottom:12px;">
+      <div class="toggle">
+        <input id="roundOn" type="checkbox" checked />
+        <label for="roundOn">拠出額を 1,000円単位で四捨五入（ON/OFF）</label>
+      </div>
+      <div class="hint">
+        ルール：contrib = (avg - allowance) + max(0, net - avg) * rate ／ pocket = net - contrib（丸めON時は contrib を丸めてから pocket 再計算）
+      </div>
+    </div>
+
+    <div class="grid">
+      <section class="card" id="husband">
+        <h2>夫</h2>
+
+        <div class="row">
+          <label>当月手取り（net）</label>
+          <input id="hNet" type="number" min="0" step="1" inputmode="numeric" />
+        </div>
+        <div class="row">
+          <label>平均手取り（avg）</label>
+          <input id="hAvg" type="number" min="0" step="1" inputmode="numeric" value="375419" />
+        </div>
+        <div class="row">
+          <label>最低お小遣い（allowance）</label>
+          <input id="hAllow" type="number" min="0" step="1" inputmode="numeric" value="50000" />
+        </div>
+        <div class="row">
+          <label>超過分の家計配分率（rate 0〜1）</label>
+          <input id="hRate" type="number" min="0" max="1" step="0.01" inputmode="decimal" value="0.5" />
+        </div>
+
+        <div class="result">
+          <div class="kv"><div class="k">家計拠出額</div><div class="v" id="hContrib">—</div></div>
+          <div class="kv"><div class="k">本人の手元（お小遣い＋余剰）</div><div class="v" id="hPocket">—</div></div>
+          <div class="kv"><div class="k">平均差分（net-avg）</div><div class="v" id="hDiff">—</div></div>
+          <div class="kv"><div class="k">超過分按分による家計追加額</div><div class="v" id="hExtra">—</div></div>
+        </div>
+
+        <div class="err" id="hErr" style="display:none;"></div>
+      </section>
+
+      <section class="card" id="wife">
+        <h2>妻</h2>
+
+        <div class="row">
+          <label>当月手取り（net）</label>
+          <input id="wNet" type="number" min="0" step="1" inputmode="numeric" />
+        </div>
+        <div class="row">
+          <label>平均手取り（avg）</label>
+          <input id="wAvg" type="number" min="0" step="1" inputmode="numeric" value="194420" />
+        </div>
+        <div class="row">
+          <label>最低お小遣い（allowance）</label>
+          <input id="wAllow" type="number" min="0" step="1" inputmode="numeric" value="50000" />
+        </div>
+        <div class="row">
+          <label>超過分の家計配分率（rate 0〜1）</label>
+          <input id="wRate" type="number" min="0" max="1" step="0.01" inputmode="decimal" value="0.5" />
+        </div>
+
+        <div class="result">
+          <div class="kv"><div class="k">家計拠出額</div><div class="v" id="wContrib">—</div></div>
+          <div class="kv"><div class="k">本人の手元（お小遣い＋余剰）</div><div class="v" id="wPocket">—</div></div>
+          <div class="kv"><div class="k">平均差分（net-avg）</div><div class="v" id="wDiff">—</div></div>
+          <div class="kv"><div class="k">超過分按分による家計追加額</div><div class="v" id="wExtra">—</div></div>
+        </div>
+
+        <div class="err" id="wErr" style="display:none;"></div>
+      </section>
+    </div>
+
+    <section class="card sum">
+      <h2>夫婦合計</h2>
+      <div class="result">
+        <div class="kv"><div class="k">合計手取り</div><div class="v" id="tNet">—</div></div>
+        <div class="kv"><div class="k">合計家計拠出</div><div class="v" id="tContrib">—</div></div>
+        <div class="kv"><div class="k">合計手元</div><div class="v" id="tPocket">—</div></div>
+      </div>
+
+      <div class="actions">
+        <button class="primary" id="copyBtn">結果をコピー（テキスト）</button>
+        <button id="resetBtn">入力をリセット</button>
+      </div>
+
+      <div class="hint">任意：URLクエリ対応（例） ?hNet=400000&wNet=220000 ／ 入力は自動保存（ローカルストレージ）</div>
+      <textarea id="out" readonly></textarea>
+    </section>
+  </div>
+
+  <script>
+    const yen = (n) => {
+      if (n === null || n === undefined || Number.isNaN(n)) return "—";
+      return n.toLocaleString("ja-JP") + "円";
+    };
+
+    const els = (ids) => Object.fromEntries(ids.map(id => [id, document.getElementById(id)]));
+
+    const E = els([
+      "roundOn",
+      "hNet","hAvg","hAllow","hRate","hContrib","hPocket","hDiff","hExtra","hErr",
+      "wNet","wAvg","wAllow","wRate","wContrib","wPocket","wDiff","wExtra","wErr",
+      "tNet","tContrib","tPocket",
+      "copyBtn","resetBtn","out"
+    ]);
+
+    const LS_KEY = "pocket-contrib-v1";
+
+    function getNum(input) {
+      const v = input.value.trim();
+      if (v === "") return null;
+      const n = Number(v);
+      return Number.isFinite(n) ? n : NaN;
+    }
+
+    function validate(net, avg, allowance, rate) {
+      const errors = [];
+      const isBad = (x) => x === null || Number.isNaN(x);
+
+      if (isBad(net)) errors.push("当月手取り（net）を入力してください。");
+      if (isBad(avg)) errors.push("平均手取り（avg）を入力してください。");
+      if (isBad(allowance)) errors.push("最低お小遣い（allowance）を入力してください。");
+      if (isBad(rate)) errors.push("配分率（rate）を入力してください。");
+
+      const nonNeg = (name, v) => { if (v !== null && !Number.isNaN(v) && v < 0) errors.push(`${name} は0以上にしてください。`); };
+      nonNeg("当月手取り", net);
+      nonNeg("平均手取り", avg);
+      nonNeg("最低お小遣い", allowance);
+
+      if (rate !== null && !Number.isNaN(rate) && (rate < 0 || rate > 1)) errors.push("配分率（rate）は0〜1の範囲にしてください。");
+      return errors;
+    }
+
+    function round1000(v) {
+      return Math.round(v / 1000) * 1000;
+    }
+
+    function calcOne(net, avg, allowance, rate, roundOn) {
+      const base = (avg - allowance);
+      const excess = Math.max(0, net - avg);
+      const extra = excess * rate;
+      let contrib = base + extra;
+
+      if (roundOn) contrib = round1000(contrib);
+      const pocket = net - contrib; // 丸め後に再計算（要件どおり）
+
+      return { contrib, pocket, diff: net - avg, extra };
+    }
+
+    function setErr(which, msg) {
+      const el = which === "h" ? E.hErr : E.wErr;
+      if (!msg) { el.style.display = "none"; el.textContent = ""; }
+      else { el.style.display = "block"; el.textContent = msg; }
+    }
+
+    function setDash(which) {
+      const p = (id) => document.getElementById(id);
+      if (which === "h") {
+        E.hContrib.textContent = "—";
+        E.hPocket.textContent = "—";
+        E.hDiff.textContent = "—";
+        E.hExtra.textContent = "—";
+      } else {
+        E.wContrib.textContent = "—";
+        E.wPocket.textContent = "—";
+        E.wDiff.textContent = "—";
+        E.wExtra.textContent = "—";
+      }
+    }
+
+    function buildOutput(h, w) {
+      return [
+        "【当月 手取り→家計拠出＆手元】",
+        "",
+        "■ 夫",
+        `・当月手取り：${yen(h.net)}`,
+        `・家計拠出額：${yen(h.contrib)}`,
+        `・手元：${yen(h.pocket)}`,
+        `・平均差分：${yen(h.diff)}`,
+        `・超過分按分（家計追加）：${yen(h.extra)}`,
+        "",
+        "■ 妻",
+        `・当月手取り：${yen(w.net)}`,
+        `・家計拠出額：${yen(w.contrib)}`,
+        `・手元：${yen(w.pocket)}`,
+        `・平均差分：${yen(w.diff)}`,
+        `・超過分按分（家計追加）：${yen(w.extra)}`,
+        "",
+        "■ 合計",
+        `・合計手取り：${yen(h.net + w.net)}`,
+        `・合計家計拠出：${yen(h.contrib + w.contrib)}`,
+        `・合計手元：${yen(h.pocket + w.pocket)}`
+      ].join("\n");
+    }
+
+    function compute() {
+      const roundOn = E.roundOn.checked;
+
+      const h = {
+        net: getNum(E.hNet),
+        avg: getNum(E.hAvg),
+        allow: getNum(E.hAllow),
+        rate: getNum(E.hRate),
+      };
+      const w = {
+        net: getNum(E.wNet),
+        avg: getNum(E.wAvg),
+        allow: getNum(E.wAllow),
+        rate: getNum(E.wRate),
+      };
+
+      const hErrs = validate(h.net, h.avg, h.allow, h.rate);
+      const wErrs = validate(w.net, w.avg, w.allow, w.rate);
+
+      if (hErrs.length) { setErr("h", hErrs.join(" ")); setDash("h"); }
+      else setErr("h", "");
+
+      if (wErrs.length) { setErr("w", wErrs.join(" ")); setDash("w"); }
+      else setErr("w", "");
+
+      // 合計欄は両方OKのときだけ出す
+      if (hErrs.length || wErrs.length) {
+        E.tNet.textContent = "—";
+        E.tContrib.textContent = "—";
+        E.tPocket.textContent = "—";
+        E.out.value = "";
+        save();
+        return;
+      }
+
+      const hr = calcOne(h.net, h.avg, h.allow, h.rate, roundOn);
+      const wr = calcOne(w.net, w.avg, w.allow, w.rate, roundOn);
+
+      // 反映
+      E.hContrib.textContent = yen(hr.contrib);
+      E.hPocket.textContent = yen(hr.pocket);
+      E.hDiff.textContent = yen(hr.diff);
+      E.hExtra.textContent = yen(hr.extra);
+
+      E.wContrib.textContent = yen(wr.contrib);
+      E.wPocket.textContent = yen(wr.pocket);
+      E.wDiff.textContent = yen(wr.diff);
+      E.wExtra.textContent = yen(wr.extra);
+
+      E.tNet.textContent = yen(h.net + w.net);
+      E.tContrib.textContent = yen(hr.contrib + wr.contrib);
+      E.tPocket.textContent = yen(hr.pocket + wr.pocket);
+
+      E.out.value = buildOutput(
+        { ...h, ...hr },
+        { ...w, ...wr }
+      );
+
+      save();
+    }
+
+    function save() {
+      const data = {
+        roundOn: E.roundOn.checked,
+        hNet: E.hNet.value, hAvg: E.hAvg.value, hAllow: E.hAllow.value, hRate: E.hRate.value,
+        wNet: E.wNet.value, wAvg: E.wAvg.value, wAllow: E.wAllow.value, wRate: E.wRate.value,
+      };
+      localStorage.setItem(LS_KEY, JSON.stringify(data));
+    }
+
+    function load() {
+      // URLクエリ優先（任意要件）
+      const q = new URLSearchParams(location.search);
+      const qSet = (id, key) => {
+        if (q.has(key)) document.getElementById(id).value = q.get(key);
+      };
+      qSet("hNet", "hNet"); qSet("wNet", "wNet");
+      qSet("hAvg", "hAvg"); qSet("wAvg", "wAvg");
+      qSet("hAllow", "hAllow"); qSet("wAllow", "wAllow");
+      qSet("hRate", "hRate"); qSet("wRate", "wRate");
+      if (q.has("round")) E.roundOn.checked = q.get("round") !== "0";
+
+      // ローカルストレージ（URLが無ければ）
+      const raw = localStorage.getItem(LS_KEY);
+      if (!raw) return;
+      const data = JSON.parse(raw);
+
+      // URLで上書きされていないものだけ復元
+      const setIfEmpty = (el, v) => { if (!el.value && v !== undefined) el.value = v; };
+
+      if (!q.has("round") && typeof data.roundOn === "boolean") E.roundOn.checked = data.roundOn;
+
+      setIfEmpty(E.hNet, data.hNet); setIfEmpty(E.wNet, data.wNet);
+      if (!q.has("hAvg")) E.hAvg.value = data.hAvg ?? E.hAvg.value;
+      if (!q.has("wAvg")) E.wAvg.value = data.wAvg ?? E.wAvg.value;
+      if (!q.has("hAllow")) E.hAllow.value = data.hAllow ?? E.hAllow.value;
+      if (!q.has("wAllow")) E.wAllow.value = data.wAllow ?? E.wAllow.value;
+      if (!q.has("hRate")) E.hRate.value = data.hRate ?? E.hRate.value;
+      if (!q.has("wRate")) E.wRate.value = data.wRate ?? E.wRate.value;
+    }
+
+    function resetAll() {
+      localStorage.removeItem(LS_KEY);
+      E.roundOn.checked = true;
+      E.hNet.value = ""; E.wNet.value = "";
+      E.hAvg.value = "375419"; E.wAvg.value = "194420";
+      E.hAllow.value = "50000"; E.wAllow.value = "50000";
+      E.hRate.value = "0.5"; E.wRate.value = "0.5";
+      compute();
+    }
+
+    // イベント
+    const inputs = [
+      E.roundOn,
+      E.hNet,E.hAvg,E.hAllow,E.hRate,
+      E.wNet,E.wAvg,E.wAllow,E.wRate
+    ];
+    inputs.forEach(el => el.addEventListener("input", compute));
+    E.copyBtn.addEventListener("click", async () => {
+      if (!E.out.value) return;
+      await navigator.clipboard.writeText(E.out.value);
+      E.copyBtn.textContent = "コピーしました";
+      setTimeout(() => (E.copyBtn.textContent = "結果をコピー（テキスト）"), 1200);
+    });
+    E.resetBtn.addEventListener("click", resetAll);
+
+    // 初期化
+    load();
+    compute();
+  </script>
+</body>
+</html>
