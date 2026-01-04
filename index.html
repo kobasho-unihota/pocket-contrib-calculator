@@ -19,7 +19,8 @@
 
     .row { display:grid; grid-template-columns:160px 1fr; gap:10px; align-items:center; margin-bottom:10px; }
     label { font-size:13px; color:#333; }
-    input[type="text"] {
+
+    input[type="text"]{
       width:100%; padding:10px 12px; font-size:16px;
       border:1px solid #ddd; border-radius:10px;
       background:#fff;
@@ -55,7 +56,6 @@
 
     <div class="row">
       <label>当月手取り</label>
-      <!-- カンマ入力を許すため text に変更 -->
       <input id="net" type="text" inputmode="numeric" placeholder="例：350000 / 350,000" />
     </div>
 
@@ -83,7 +83,7 @@
 
     <div class="hint">
       ※ 最低お小遣い 50,000円は必ず確保されます。<br>
-      カンマ入り（例：350,000）でも入力できます。
+      カンマ入りで入力OK。入力欄はフォーカスが外れると自動でカンマ整形されます。
     </div>
   </div>
 </div>
@@ -99,21 +99,27 @@
   const yen = n => n.toLocaleString("ja-JP") + "円";
   const round1000 = v => Math.round(v / 1000) * 1000;
 
-  // 全角→半角（数字・カンマ・スペース）＋カンマ除去して数値化
+  // 全角→半角（数字）＋カンマ除去＋記号除去して数値化
   function parseMoney(str) {
     if (str == null) return null;
     let s = String(str).trim();
     if (!s) return null;
 
-    // 全角数字を半角へ
     s = s.replace(/[０-９]/g, ch => String.fromCharCode(ch.charCodeAt(0) - 0xFEE0));
-    // 全角カンマ/全角スペース/円記号などを吸収
     s = s.replace(/[，,]/g, "");
     s = s.replace(/[￥¥円\s]/g, "");
 
     if (!s) return null;
     const n = Number(s);
     return Number.isFinite(n) ? n : NaN;
+  }
+
+  // 数値 → "350,000" 表示（円は付けない：入力欄用）
+  function formatMoneyInput(n) {
+    if (!Number.isFinite(n)) return "";
+    // 小数が来る想定はないので整数化（念のため）
+    const i = Math.round(n);
+    return i.toLocaleString("ja-JP");
   }
 
   const whoShogo = document.getElementById("whoShogo");
@@ -205,9 +211,25 @@
 （参考）超過分の家計追加：${yen(extra)}`;
   }
 
-  // 入力時に勝手にカンマ整形したい場合は後で追加も可能（今は計算だけ対応）
+  function normalizeNetInputOnBlur() {
+    const net = parseMoney(netEl.value);
+    if (net === null) {
+      netEl.value = "";
+      return;
+    }
+    if (Number.isNaN(net) || net < 0) {
+      // 不正値はそのまま（ユーザーが直せるように）
+      return;
+    }
+    netEl.value = formatMoneyInput(net);
+  }
+
   [whoShogo, whoKana].forEach(el => el.addEventListener("change", compute));
   netEl.addEventListener("input", compute);
+  netEl.addEventListener("blur", () => {
+    normalizeNetInputOnBlur();
+    compute(); // 整形後も結果を最新に
+  });
   roundOnEl.addEventListener("change", compute);
 
   copyBtn.onclick = async () => {
