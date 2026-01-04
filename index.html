@@ -6,242 +6,127 @@
   <title>手取り → 家計振込・お小遣い</title>
 
   <style>
-    /* ===== reset / safety ===== */
     *, *::before, *::after { box-sizing: border-box; }
 
     :root{
-      --bg: #f6f5f2;
-      --card: #ffffff;
-      --text: #2e2e2e;
-      --muted: #7a7a7a;
-      --line: #e4e2dd;
-      --soft: #f1f0eb;
-
-      --accent: #7fa99b;      /* くすみグリーン */
-      --accent-soft: #e7f0ed;
-
-      --radius: 18px;
-      --radius-s: 14px;
-      --shadow: 0 6px 16px rgba(0,0,0,.06);
+      --bg:#f6f5f2;
+      --card:#ffffff;
+      --text:#2e2e2e;
+      --muted:#7a7a7a;
+      --line:#e4e2dd;
+      --soft:#f1f0eb;
+      --accent:#7fa99b;
+      --accent-soft:#e7f0ed;
+      --radius:18px;
+      --radius-s:14px;
+      --shadow:0 6px 16px rgba(0,0,0,.06);
     }
 
     body{
       margin:0;
-      font-family: -apple-system, BlinkMacSystemFont, "Hiragino Sans", "Noto Sans JP", sans-serif;
-      background: var(--bg);
-      color: var(--text);
+      font-family:-apple-system,BlinkMacSystemFont,"Hiragino Sans","Noto Sans JP",sans-serif;
+      background:var(--bg);
+      color:var(--text);
     }
 
-    .wrap{
-      max-width: 560px;
-      margin: 0 auto;
-      padding: 20px 14px 32px;
-    }
+    .wrap{max-width:560px;margin:0 auto;padding:20px 14px 32px;}
 
-    /* ===== header ===== */
-    .top{
-      margin-bottom: 14px;
-    }
-    .title{
-      font-size: 20px;
-      font-weight: 700;
-      margin: 0 0 4px;
-      letter-spacing: .2px;
-    }
-    .subtitle{
-      font-size: 12px;
-      color: var(--muted);
-      margin: 0;
-      line-height: 1.4;
-    }
+    .title{font-size:20px;font-weight:700;margin:0 0 4px;}
+    .subtitle{font-size:12px;color:var(--muted);margin:0 0 14px;}
 
-    /* ===== card ===== */
     .card{
-      background: var(--card);
-      border: 1px solid var(--line);
-      border-radius: var(--radius);
-      box-shadow: var(--shadow);
-      padding: 14px;
+      background:var(--card);
+      border:1px solid var(--line);
+      border-radius:var(--radius);
+      box-shadow:var(--shadow);
+      padding:14px;
     }
 
-    /* ===== segmented control ===== */
     .seg{
-      display:flex;
-      gap: 8px;
-      padding: 6px;
-      border-radius: var(--radius-s);
-      background: var(--soft);
-      border: 1px solid var(--line);
-      margin-bottom: 14px;
+      display:flex;gap:8px;padding:6px;
+      border-radius:var(--radius-s);
+      background:var(--soft);
+      border:1px solid var(--line);
+      margin-bottom:14px;
     }
-    .seg label{
-      flex:1;
-      cursor:pointer;
-      text-align:center;
-      user-select:none;
-    }
-    .seg input{ display:none; }
+    .seg label{flex:1;text-align:center;cursor:pointer;}
+    .seg input{display:none;}
     .seg span{
-      display:block;
-      padding: 10px 0;
-      border-radius: 12px;
-      font-size: 14px;
-      font-weight: 600;
-      color: var(--muted);
-      transition: background .15s ease, color .15s ease;
+      display:block;padding:10px 0;border-radius:12px;
+      font-size:14px;font-weight:600;color:var(--muted);
     }
     .seg input:checked + span{
-      background: var(--card);
-      color: var(--text);
-      border: 1px solid var(--line);
+      background:#fff;color:var(--text);border:1px solid var(--line);
     }
 
-    /* ===== form ===== */
-    .form{
-      display:flex;
-      flex-direction:column;
-      gap: 10px;
-    }
-
+    .form{display:flex;flex-direction:column;gap:10px;}
     .row{
-      display:grid;
-      grid-template-columns: 150px 1fr;
-      gap: 10px;
-      align-items:center;
+      display:grid;grid-template-columns:150px 1fr;
+      gap:10px;align-items:center;
     }
-    .row > * { min-width: 0; }
+    .row>*{min-width:0;}
 
-    label{
-      font-size: 12px;
-      font-weight: 600;
-      color: var(--muted);
-      white-space: nowrap;
-    }
+    label{font-size:12px;font-weight:600;color:var(--muted);}
 
     input[type="text"]{
-      width: 100%;
-      padding: 12px;
-      font-size: 16px;
-      border-radius: 12px;
-      border: 1px solid var(--line);
-      background: #fff;
+      width:100%;padding:12px;font-size:16px;
+      border-radius:12px;border:1px solid var(--line);
+      background:#fff;
     }
-    input[type="text"]:focus{
-      outline: none;
-      border-color: var(--accent);
-      background: #fff;
-    }
-    input[readonly]{
-      background: var(--soft);
-      color: var(--muted);
-    }
+    input[readonly]{background:var(--soft);color:var(--muted);}
 
     .toggle{
-      display:flex;
-      align-items:center;
-      gap: 8px;
-      padding: 10px 12px;
-      border-radius: 12px;
-      background: var(--soft);
-      border: 1px solid var(--line);
-      font-size: 13px;
-      color: var(--muted);
+      display:flex;align-items:center;gap:8px;
+      padding:10px 12px;border-radius:12px;
+      background:var(--soft);border:1px solid var(--line);
+      font-size:13px;color:var(--muted);
     }
-    .toggle input{
-      width: 18px;
-      height: 18px;
-      accent-color: var(--accent);
-    }
+    .toggle input{width:18px;height:18px;accent-color:var(--accent);}
 
-    /* ===== result ===== */
     .result{
-      margin-top: 14px;
-      padding: 12px;
-      border-radius: var(--radius-s);
-      border: 1px solid var(--line);
-      background: #fafafa;
+      margin-top:14px;padding:12px;
+      border-radius:var(--radius-s);
+      border:1px solid var(--line);
+      background:#fafafa;
     }
-
     .kv{
-      display:flex;
-      justify-content: space-between;
-      gap: 10px;
-      padding: 8px 0;
-      border-bottom: 1px dashed var(--line);
+      display:flex;justify-content:space-between;
+      gap:10px;padding:8px 0;border-bottom:1px dashed var(--line);
     }
-    .kv:last-child{ border-bottom:none; }
-
-    .k{
-      font-size: 13px;
-      color: var(--muted);
-      white-space: nowrap;
-    }
-    .v{
-      font-weight: 700;
-      font-variant-numeric: tabular-nums;
-      text-align: right;
-    }
-    .v.main{
-      font-size: 20px;
-      color: var(--text);
-    }
-    .sub{
-      color: var(--muted);
-      font-weight: 600;
-    }
-
-    /* ===== actions ===== */
-    .actions{
-      margin-top: 14px;
-      display:flex;
-      gap: 10px;
-      align-items:center;
-    }
+    .kv:last-child{border-bottom:none;}
+    .k{font-size:13px;color:var(--muted);}
+    .v{font-weight:700;text-align:right;font-variant-numeric:tabular-nums;}
+    .v.main{font-size:20px;}
+    .sub{color:var(--muted);font-weight:600;}
 
     button{
-      padding: 12px 14px;
-      font-size: 14px;
-      border-radius: 12px;
-      border: 1px solid var(--line);
-      background: var(--accent-soft);
-      color: #355f55;
-      font-weight: 600;
-      cursor: pointer;
+      margin-top:14px;padding:12px 14px;
+      font-size:14px;border-radius:12px;
+      border:1px solid var(--line);
+      background:var(--accent-soft);
+      color:#355f55;font-weight:600;cursor:pointer;
     }
 
     textarea{
-      width: 100%;
-      margin-top: 12px;
-      min-height: 160px;
-      padding: 12px;
-      border-radius: 14px;
-      border: 1px solid var(--line);
-      background: #fff;
-      font-size: 13px;
-      line-height: 1.5;
-      resize: vertical;
+      width:100%;margin-top:12px;min-height:160px;
+      padding:12px;border-radius:14px;
+      border:1px solid var(--line);
+      font-size:13px;line-height:1.5;
     }
 
-    .hint{
-      margin-top: 10px;
-      font-size: 12px;
-      color: var(--muted);
-      line-height: 1.45;
-    }
+    .hint{margin-top:10px;font-size:12px;color:var(--muted);}
 
-    @media (max-width: 420px){
-      .row{ grid-template-columns: 120px 1fr; }
-      .v.main{ font-size: 18px; }
+    @media(max-width:420px){
+      .row{grid-template-columns:120px 1fr;}
+      .v.main{font-size:18px;}
     }
   </style>
 </head>
 
 <body>
 <div class="wrap">
-  <div class="top">
-    <h1 class="title">手取り → 家計振込・お小遣い</h1>
-    <p class="subtitle">最低お小遣い5万円を確保しながら、家計への振込額を自動計算します</p>
-  </div>
+  <h1 class="title">手取り → 家計振込・お小遣い</h1>
+  <p class="subtitle">最低お小遣い5万円を確保しながら家計振込額を計算</p>
 
   <div class="card">
     <div class="seg">
@@ -250,11 +135,7 @@
     </div>
 
     <div class="form">
-      <div class="row">
-        <label>当月手取り</label>
-        <input id="net" type="text" inputmode="numeric">
-      </div>
-
+      <div class="row"><label>当月手取り</label><input id="net" type="text" inputmode="numeric"></div>
       <div class="row"><label>平均手取り</label><input id="avg" type="text" readonly></div>
       <div class="row"><label>最低お小遣い</label><input id="allow" type="text" readonly></div>
       <div class="row"><label>超過分 家計配分率</label><input id="rate" type="text" readonly></div>
@@ -266,119 +147,123 @@
     </div>
 
     <div class="result">
-      <div class="kv"><div class="k">家計口座に振り込む</div><div class="v main" id="contrib">—</div></div>
-      <div class="kv"><div class="k">自分に残す（手元）</div><div class="v main" id="pocket">—</div></div>
+      <div class="kv"><div class="k">家計に振り込む</div><div class="v main" id="contrib">—</div></div>
+      <div class="kv"><div class="k">自分に残す</div><div class="v main" id="pocket">—</div></div>
       <div class="kv"><div class="k">└ 最低お小遣い</div><div class="v sub" id="allowShown">—</div></div>
       <div class="kv"><div class="k">└ 余剰</div><div class="v sub" id="surplus">—</div></div>
       <div class="kv"><div class="k">参考：平均との差</div><div class="v" id="diff">—</div></div>
       <div class="kv"><div class="k">参考：超過分の家計追加</div><div class="v" id="extra">—</div></div>
     </div>
 
-    <div class="actions">
-      <button id="copyBtn">結果をコピー</button>
-    </div>
-
+    <button id="copyBtn">結果をコピー</button>
     <textarea id="out" readonly></textarea>
 
     <div class="hint">
-      数字はカンマ付きで入力できます。<br>
-      手元が最低お小遣いを下回らないよう、家計振込額は自動調整されます。
+      URLに <code>?who=shogo</code> / <code>?who=kana</code> を付けると初期選択が切り替わります。
     </div>
   </div>
 </div>
 
 <script>
-  const CONFIG = {
-    shogoAvg: 375419,
-    kanaAvg: 194420,
-    allowance: 50000,
-    rate: 0.5
+  const CONFIG={
+    shogoAvg:375419,
+    kanaAvg:194420,
+    allowance:50000,
+    rate:0.5
   };
 
-  const yen = n => n.toLocaleString("ja-JP") + "円";
-  const round1000 = v => Math.round(v / 1000) * 1000;
+  const yen=n=>n.toLocaleString("ja-JP")+"円";
+  const round1000=v=>Math.round(v/1000)*1000;
 
   function parseMoney(str){
-    if (!str) return null;
-    let s = String(str).trim();
-    s = s.replace(/[０-９]/g, c => String.fromCharCode(c.charCodeAt(0) - 0xFEE0));
-    s = s.replace(/[，,￥¥円\s]/g, "");
-    const n = Number(s);
-    return Number.isFinite(n) ? n : NaN;
+    if(!str)return null;
+    let s=String(str).trim();
+    s=s.replace(/[０-９]/g,c=>String.fromCharCode(c.charCodeAt(0)-0xFEE0));
+    s=s.replace(/[，,￥¥円\s]/g,"");
+    const n=Number(s);
+    return Number.isFinite(n)?n:NaN;
   }
-
   function formatMoney(n){
-    return Number.isFinite(n) ? n.toLocaleString("ja-JP") : "";
+    return Number.isFinite(n)?n.toLocaleString("ja-JP"):"";
   }
 
-  const netEl = document.getElementById("net");
-  const avgEl = document.getElementById("avg");
-  const allowEl = document.getElementById("allow");
-  const rateEl = document.getElementById("rate");
-  const roundOnEl = document.getElementById("roundOn");
+  const whoShogo=document.getElementById("whoShogo");
+  const whoKana=document.getElementById("whoKana");
+  const netEl=document.getElementById("net");
+  const avgEl=document.getElementById("avg");
+  const allowEl=document.getElementById("allow");
+  const rateEl=document.getElementById("rate");
+  const roundOnEl=document.getElementById("roundOn");
 
-  const contribEl = document.getElementById("contrib");
-  const pocketEl = document.getElementById("pocket");
-  const allowShownEl = document.getElementById("allowShown");
-  const surplusEl = document.getElementById("surplus");
-  const diffEl = document.getElementById("diff");
-  const extraEl = document.getElementById("extra");
-  const outEl = document.getElementById("out");
-
-  const whoShogo = document.getElementById("whoShogo");
-  const whoKana = document.getElementById("whoKana");
+  const contribEl=document.getElementById("contrib");
+  const pocketEl=document.getElementById("pocket");
+  const allowShownEl=document.getElementById("allowShown");
+  const surplusEl=document.getElementById("surplus");
+  const diffEl=document.getElementById("diff");
+  const extraEl=document.getElementById("extra");
+  const outEl=document.getElementById("out");
 
   function currentAvg(){
-    return whoKana.checked ? CONFIG.kanaAvg : CONFIG.shogoAvg;
+    return whoKana.checked?CONFIG.kanaAvg:CONFIG.shogoAvg;
+  }
+
+  function applyWhoFromQuery(){
+    const p=new URLSearchParams(location.search);
+    const who=p.get("who");
+    if(who==="kana") whoKana.checked=true;
+    if(who==="shogo") whoShogo.checked=true;
   }
 
   function syncFixed(){
-    avgEl.value = yen(currentAvg());
-    allowEl.value = yen(CONFIG.allowance);
-    rateEl.value = (CONFIG.rate * 100) + "%";
+    avgEl.value=yen(currentAvg());
+    allowEl.value=yen(CONFIG.allowance);
+    rateEl.value=(CONFIG.rate*100)+"%";
   }
 
   function compute(){
     syncFixed();
-    const net = parseMoney(netEl.value);
-    if (net === null || Number.isNaN(net)) return;
+    const net=parseMoney(netEl.value);
+    if(net===null||Number.isNaN(net))return;
 
-    let contrib = (currentAvg() - CONFIG.allowance)
-      + Math.max(0, net - currentAvg()) * CONFIG.rate;
+    let contrib=(currentAvg()-CONFIG.allowance)
+      +Math.max(0,net-currentAvg())*CONFIG.rate;
 
-    contrib = Math.min(contrib, net - CONFIG.allowance);
-    if (roundOnEl.checked) contrib = round1000(contrib);
-    contrib = Math.min(contrib, net - CONFIG.allowance);
+    contrib=Math.min(contrib,net-CONFIG.allowance);
+    if(roundOnEl.checked)contrib=round1000(contrib);
+    contrib=Math.min(contrib,net-CONFIG.allowance);
 
-    const pocket = net - contrib;
+    const pocket=net-contrib;
 
-    contribEl.textContent = yen(contrib);
-    pocketEl.textContent = yen(pocket);
-    allowShownEl.textContent = yen(CONFIG.allowance);
-    surplusEl.textContent = yen(pocket - CONFIG.allowance);
-    diffEl.textContent = yen(net - currentAvg());
-    extraEl.textContent = yen(Math.max(0, net - currentAvg()) * CONFIG.rate);
+    contribEl.textContent=yen(contrib);
+    pocketEl.textContent=yen(pocket);
+    allowShownEl.textContent=yen(CONFIG.allowance);
+    surplusEl.textContent=yen(pocket-CONFIG.allowance);
+    diffEl.textContent=yen(net-currentAvg());
+    extraEl.textContent=yen(Math.max(0,net-currentAvg())*CONFIG.rate);
 
-    const who = whoKana.checked ? "かな" : "しょうご";
-    outEl.value =
+    const who=whoKana.checked?"かな":"しょうご";
+    outEl.value=
 `【当月 家計振込・お小遣い（${who}）】
 ・当月手取り：${yen(net)}
 ・家計口座に振り込む：${yen(contrib)}
 ・自分に残す：${yen(pocket)}
 　└ 最低お小遣い：${yen(CONFIG.allowance)}
-　└ 余剰：${yen(pocket - CONFIG.allowance)}`;
+　└ 余剰：${yen(pocket-CONFIG.allowance)}`;
   }
 
-  netEl.addEventListener("input", compute);
-  netEl.addEventListener("blur", () => {
-    const v = parseMoney(netEl.value);
-    if (Number.isFinite(v)) netEl.value = formatMoney(v);
+  netEl.addEventListener("input",compute);
+  netEl.addEventListener("blur",()=>{
+    const v=parseMoney(netEl.value);
+    if(Number.isFinite(v))netEl.value=formatMoney(v);
   });
+  [whoShogo,whoKana,roundOnEl].forEach(el=>el.addEventListener("change",compute));
 
-  [whoShogo, whoKana, roundOnEl].forEach(el =>
-    el.addEventListener("change", compute)
-  );
+  document.getElementById("copyBtn").onclick=async()=>{
+    if(!outEl.value)return;
+    await navigator.clipboard.writeText(outEl.value);
+  };
 
+  applyWhoFromQuery();
   syncFixed();
 </script>
 </body>
