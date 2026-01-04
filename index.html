@@ -12,146 +12,66 @@
       background: #fff;
       color: #111;
     }
-    .wrap {
-      max-width: 520px;
-      margin: 0 auto;
-      padding: 16px;
-    }
-    h1 {
-      font-size: 20px;
-      margin: 0 0 12px;
-    }
-    .card {
-      border: 1px solid #e5e5e5;
-      border-radius: 16px;
-      padding: 14px;
-    }
+    .wrap { max-width: 520px; margin: 0 auto; padding: 16px; }
+    h1 { font-size: 20px; margin: 0 0 12px; }
+    .card { border: 1px solid #e5e5e5; border-radius: 16px; padding: 14px; }
+
     .seg {
-      display: flex;
-      gap: 10px;
-      margin-bottom: 14px;
-      background: #f4f4f4;
-      border: 1px solid #e5e5e5;
-      border-radius: 14px;
-      padding: 6px;
+      display: flex; gap: 10px; margin-bottom: 14px;
+      background: #f4f4f4; border: 1px solid #e5e5e5;
+      border-radius: 14px; padding: 6px;
     }
-    .seg label {
-      flex: 1;
-      text-align: center;
-      cursor: pointer;
-    }
-    .seg input {
-      display: none;
-    }
+    .seg label { flex: 1; cursor: pointer; text-align: center; }
+    .seg input { display: none; }
     .seg span {
-      display: block;
-      padding: 10px 0;
-      border-radius: 12px;
-      font-size: 14px;
-      color: #222;
+      display: block; padding: 10px 0; border-radius: 12px;
+      font-size: 14px; color: #222;
     }
-    .seg input:checked + span {
-      background: #111;
-      color: #fff;
-    }
+    .seg input:checked + span { background: #111; color: #fff; }
 
     .row {
-      display: grid;
-      grid-template-columns: 160px 1fr;
-      gap: 10px;
-      align-items: center;
-      margin-bottom: 10px;
+      display: grid; grid-template-columns: 160px 1fr;
+      gap: 10px; align-items: center; margin-bottom: 10px;
     }
-    label {
-      font-size: 13px;
-      color: #333;
-    }
+    label { font-size: 13px; color: #333; }
     input[type="number"], input[type="text"] {
-      width: 100%;
-      padding: 10px 12px;
-      font-size: 16px;
-      border: 1px solid #ddd;
-      border-radius: 10px;
-      background: #fff;
+      width: 100%; padding: 10px 12px; font-size: 16px;
+      border: 1px solid #ddd; border-radius: 10px;
     }
-    input[readonly] {
-      background: #f7f7f7;
-    }
+    input[readonly] { background: #f7f7f7; }
     input[type="number"]::-webkit-inner-spin-button,
     input[type="number"]::-webkit-outer-spin-button {
-      -webkit-appearance: none;
-      margin: 0;
+      -webkit-appearance: none; margin: 0;
     }
 
-    .toggle {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      margin: 10px 0;
-      font-size: 13px;
-    }
+    .toggle { display: flex; gap: 8px; margin: 10px 0; font-size: 13px; }
 
     .result {
-      margin-top: 14px;
-      background: #fafafa;
-      border: 1px solid #e5e5e5;
-      border-radius: 14px;
-      padding: 12px;
+      margin-top: 14px; background: #fafafa;
+      border: 1px solid #e5e5e5; border-radius: 14px; padding: 12px;
     }
     .kv {
-      display: flex;
-      justify-content: space-between;
-      padding: 6px 0;
-      border-bottom: 1px dashed #ddd;
+      display: flex; justify-content: space-between;
+      padding: 6px 0; border-bottom: 1px dashed #ddd;
     }
-    .kv:last-child {
-      border-bottom: none;
-    }
-    .k {
-      font-size: 13px;
-      color: #444;
-    }
-    .v {
-      font-weight: 700;
-      font-variant-numeric: tabular-nums;
-    }
-    .main {
-      font-size: 18px;
-    }
-    .sub {
-      color: #555;
-      font-weight: 600;
-    }
+    .kv:last-child { border-bottom: none; }
+    .k { font-size: 13px; color: #444; }
+    .v { font-weight: 700; font-variant-numeric: tabular-nums; }
+    .main { font-size: 18px; }
+    .sub { color: #555; }
 
-    .err {
-      color: #b00020;
-      font-size: 13px;
-      margin-top: 8px;
-    }
+    .err { color: #b00020; font-size: 13px; margin-top: 8px; }
     button {
-      margin-top: 12px;
-      padding: 10px 14px;
-      font-size: 15px;
-      border-radius: 12px;
-      border: 1px solid #ddd;
-      background: #fff;
-      cursor: pointer;
+      margin-top: 12px; padding: 10px 14px;
+      font-size: 15px; border-radius: 12px;
+      border: 1px solid #ddd; background: #fff;
     }
     textarea {
-      width: 100%;
-      margin-top: 12px;
-      min-height: 170px;
-      padding: 10px;
-      font-size: 13px;
-      border-radius: 12px;
-      border: 1px solid #ddd;
+      width: 100%; margin-top: 12px; min-height: 170px;
+      padding: 10px; font-size: 13px;
+      border-radius: 12px; border: 1px solid #ddd;
     }
-    .hint {
-      font-size: 12px;
-      color: #666;
-      margin-top: 8px;
-      line-height: 1.4;
-    }
+    .hint { font-size: 12px; color: #666; margin-top: 8px; line-height: 1.4; }
   </style>
 </head>
 
@@ -160,83 +80,42 @@
   <h1>手取り → 家計振込・お小遣い</h1>
 
   <div class="card">
-
-    <!-- 利用者選択 -->
+    <!-- 利用者 -->
     <div class="seg">
-      <label>
-        <input type="radio" name="who" id="whoShogo" checked />
-        <span>しょうご</span>
-      </label>
-      <label>
-        <input type="radio" name="who" id="whoKana" />
-        <span>かな</span>
-      </label>
+      <label><input type="radio" name="who" id="whoShogo" checked><span>しょうご</span></label>
+      <label><input type="radio" name="who" id="whoKana"><span>かな</span></label>
     </div>
 
-    <!-- 入力 -->
     <div class="row">
       <label>当月手取り</label>
-      <input id="net" type="number" min="0" placeholder="例：400000" />
+      <input id="net" type="number" min="0" placeholder="例：350000">
     </div>
 
-    <!-- 固定値 -->
-    <div class="row">
-      <label>平均手取り</label>
-      <input id="avg" type="text" readonly />
-    </div>
-    <div class="row">
-      <label>最低お小遣い</label>
-      <input id="allow" type="text" readonly />
-    </div>
-    <div class="row">
-      <label>超過分 家計配分率</label>
-      <input id="rate" type="text" readonly />
-    </div>
+    <div class="row"><label>平均手取り</label><input id="avg" type="text" readonly></div>
+    <div class="row"><label>最低お小遣い</label><input id="allow" type="text" readonly></div>
+    <div class="row"><label>超過分 家計配分率</label><input id="rate" type="text" readonly></div>
 
     <div class="toggle">
-      <input id="roundOn" type="checkbox" checked />
+      <input id="roundOn" type="checkbox" checked>
       <label for="roundOn">家計振込額を1,000円単位で四捨五入</label>
     </div>
 
-    <!-- 結果 -->
     <div class="result">
-      <div class="kv">
-        <div class="k">🏦 家計口座に振り込む</div>
-        <div class="v main" id="contrib">—</div>
-      </div>
-      <div class="kv">
-        <div class="k">👛 自分に残す（手元）</div>
-        <div class="v main" id="pocket">—</div>
-      </div>
-
-      <div class="kv">
-        <div class="k">└ 最低お小遣い</div>
-        <div class="v sub" id="allowShown">—</div>
-      </div>
-      <div class="kv">
-        <div class="k">└ 余剰</div>
-        <div class="v sub" id="surplus">—</div>
-      </div>
-
-      <div class="kv">
-        <div class="k">参考：平均との差</div>
-        <div class="v" id="diff">—</div>
-      </div>
-      <div class="kv">
-        <div class="k">参考：超過分の家計追加</div>
-        <div class="v" id="extra">—</div>
-      </div>
+      <div class="kv"><div class="k">🏦 家計口座に振り込む</div><div class="v main" id="contrib">—</div></div>
+      <div class="kv"><div class="k">👛 自分に残す（手元）</div><div class="v main" id="pocket">—</div></div>
+      <div class="kv"><div class="k">└ 最低お小遣い</div><div class="v sub" id="allowShown">—</div></div>
+      <div class="kv"><div class="k">└ 余剰</div><div class="v sub" id="surplus">—</div></div>
+      <div class="kv"><div class="k">参考：平均との差</div><div class="v" id="diff">—</div></div>
+      <div class="kv"><div class="k">参考：超過分の家計追加</div><div class="v" id="extra">—</div></div>
     </div>
 
     <div class="err" id="err" style="display:none;"></div>
-
     <button id="copyBtn">結果をコピー</button>
     <textarea id="out" readonly></textarea>
 
     <div class="hint">
-      計算式：<br>
-      家計振込 ＝ (平均 − 最低お小遣い) ＋ max(0, 手取り − 平均) × 配分率<br>
-      手元 ＝ 手取り − 家計振込
+      ※ 最低お小遣い 50,000円は必ず確保されます。<br>
+      家計振込額は、お小遣いを下回らない範囲で自動調整されます。
     </div>
   </div>
 </div>
@@ -284,18 +163,11 @@
     syncFixed();
 
     const netVal = netEl.value.trim();
-    if (!netVal) {
-      contribEl.textContent = pocketEl.textContent = "—";
-      allowShownEl.textContent = surplusEl.textContent = "—";
-      diffEl.textContent = extraEl.textContent = "—";
-      outEl.value = "";
-      errEl.style.display = "none";
-      return;
-    }
+    if (!netVal) return;
 
     const net = Number(netVal);
     if (!Number.isFinite(net) || net < 0) {
-      errEl.textContent = "当月手取りは0以上の数値で入力してください。";
+      errEl.textContent = "当月手取りは0以上で入力してください。";
       errEl.style.display = "block";
       return;
     }
@@ -306,8 +178,17 @@
     const excess = Math.max(0, net - avg);
     const extra = excess * CONFIG.rate;
 
+    // 元の計算
     let contrib = base + extra;
+
+    // 最低お小遣い保証（重要）
+    contrib = Math.min(contrib, net - CONFIG.allowance);
+
+    // 丸め
     if (roundOnEl.checked) contrib = round1000(contrib);
+
+    // 念のため再クランプ
+    contrib = Math.min(contrib, net - CONFIG.allowance);
 
     const pocket = net - contrib;
     const surplus = pocket - CONFIG.allowance;
@@ -331,8 +212,7 @@
 （参考）超過分の家計追加：${yen(extra)}`;
   }
 
-  whoShogo.addEventListener("change", compute);
-  whoKana.addEventListener("change", compute);
+  [whoShogo, whoKana].forEach(el => el.addEventListener("change", compute));
   netEl.addEventListener("input", compute);
   roundOnEl.addEventListener("change", compute);
 
