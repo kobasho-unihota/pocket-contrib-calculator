@@ -6,72 +6,40 @@
   <title>家計振込・お小遣い計算</title>
 
   <style>
-    body {
-      font-family: system-ui, -apple-system, "Hiragino Sans", "Noto Sans JP", sans-serif;
-      margin: 0;
-      background: #fff;
-      color: #111;
-    }
+    body { font-family: system-ui, -apple-system, "Hiragino Sans", "Noto Sans JP", sans-serif; margin: 0; background: #fff; color: #111; }
     .wrap { max-width: 520px; margin: 0 auto; padding: 16px; }
     h1 { font-size: 20px; margin: 0 0 12px; }
     .card { border: 1px solid #e5e5e5; border-radius: 16px; padding: 14px; }
 
-    .seg {
-      display: flex; gap: 10px; margin-bottom: 14px;
-      background: #f4f4f4; border: 1px solid #e5e5e5;
-      border-radius: 14px; padding: 6px;
-    }
-    .seg label { flex: 1; cursor: pointer; text-align: center; }
-    .seg input { display: none; }
-    .seg span {
-      display: block; padding: 10px 0; border-radius: 12px;
-      font-size: 14px; color: #222;
-    }
-    .seg input:checked + span { background: #111; color: #fff; }
+    .seg { display:flex; gap:10px; margin-bottom:14px; background:#f4f4f4; border:1px solid #e5e5e5; border-radius:14px; padding:6px; }
+    .seg label { flex:1; cursor:pointer; text-align:center; }
+    .seg input { display:none; }
+    .seg span { display:block; padding:10px 0; border-radius:12px; font-size:14px; color:#222; }
+    .seg input:checked + span { background:#111; color:#fff; }
 
-    .row {
-      display: grid; grid-template-columns: 160px 1fr;
-      gap: 10px; align-items: center; margin-bottom: 10px;
+    .row { display:grid; grid-template-columns:160px 1fr; gap:10px; align-items:center; margin-bottom:10px; }
+    label { font-size:13px; color:#333; }
+    input[type="text"] {
+      width:100%; padding:10px 12px; font-size:16px;
+      border:1px solid #ddd; border-radius:10px;
+      background:#fff;
     }
-    label { font-size: 13px; color: #333; }
-    input[type="number"], input[type="text"] {
-      width: 100%; padding: 10px 12px; font-size: 16px;
-      border: 1px solid #ddd; border-radius: 10px;
-    }
-    input[readonly] { background: #f7f7f7; }
-    input[type="number"]::-webkit-inner-spin-button,
-    input[type="number"]::-webkit-outer-spin-button {
-      -webkit-appearance: none; margin: 0;
-    }
+    input[readonly] { background:#f7f7f7; }
 
-    .toggle { display: flex; gap: 8px; margin: 10px 0; font-size: 13px; }
+    .toggle { display:flex; gap:8px; margin:10px 0; font-size:13px; }
 
-    .result {
-      margin-top: 14px; background: #fafafa;
-      border: 1px solid #e5e5e5; border-radius: 14px; padding: 12px;
-    }
-    .kv {
-      display: flex; justify-content: space-between;
-      padding: 6px 0; border-bottom: 1px dashed #ddd;
-    }
-    .kv:last-child { border-bottom: none; }
-    .k { font-size: 13px; color: #444; }
-    .v { font-weight: 700; font-variant-numeric: tabular-nums; }
-    .main { font-size: 18px; }
-    .sub { color: #555; }
+    .result { margin-top:14px; background:#fafafa; border:1px solid #e5e5e5; border-radius:14px; padding:12px; }
+    .kv { display:flex; justify-content:space-between; padding:6px 0; border-bottom:1px dashed #ddd; }
+    .kv:last-child { border-bottom:none; }
+    .k { font-size:13px; color:#444; }
+    .v { font-weight:700; font-variant-numeric: tabular-nums; }
+    .main { font-size:18px; }
+    .sub { color:#555; }
 
-    .err { color: #b00020; font-size: 13px; margin-top: 8px; }
-    button {
-      margin-top: 12px; padding: 10px 14px;
-      font-size: 15px; border-radius: 12px;
-      border: 1px solid #ddd; background: #fff;
-    }
-    textarea {
-      width: 100%; margin-top: 12px; min-height: 170px;
-      padding: 10px; font-size: 13px;
-      border-radius: 12px; border: 1px solid #ddd;
-    }
-    .hint { font-size: 12px; color: #666; margin-top: 8px; line-height: 1.4; }
+    .err { color:#b00020; font-size:13px; margin-top:8px; }
+    button { margin-top:12px; padding:10px 14px; font-size:15px; border-radius:12px; border:1px solid #ddd; background:#fff; cursor:pointer; }
+    textarea { width:100%; margin-top:12px; min-height:170px; padding:10px; font-size:13px; border-radius:12px; border:1px solid #ddd; }
+    .hint { font-size:12px; color:#666; margin-top:8px; line-height:1.4; }
   </style>
 </head>
 
@@ -80,7 +48,6 @@
   <h1>手取り → 家計振込・お小遣い</h1>
 
   <div class="card">
-    <!-- 利用者 -->
     <div class="seg">
       <label><input type="radio" name="who" id="whoShogo" checked><span>しょうご</span></label>
       <label><input type="radio" name="who" id="whoKana"><span>かな</span></label>
@@ -88,7 +55,8 @@
 
     <div class="row">
       <label>当月手取り</label>
-      <input id="net" type="number" min="0" placeholder="例：350000">
+      <!-- カンマ入力を許すため text に変更 -->
+      <input id="net" type="text" inputmode="numeric" placeholder="例：350000 / 350,000" />
     </div>
 
     <div class="row"><label>平均手取り</label><input id="avg" type="text" readonly></div>
@@ -115,7 +83,7 @@
 
     <div class="hint">
       ※ 最低お小遣い 50,000円は必ず確保されます。<br>
-      家計振込額は、お小遣いを下回らない範囲で自動調整されます。
+      カンマ入り（例：350,000）でも入力できます。
     </div>
   </div>
 </div>
@@ -130,6 +98,23 @@
 
   const yen = n => n.toLocaleString("ja-JP") + "円";
   const round1000 = v => Math.round(v / 1000) * 1000;
+
+  // 全角→半角（数字・カンマ・スペース）＋カンマ除去して数値化
+  function parseMoney(str) {
+    if (str == null) return null;
+    let s = String(str).trim();
+    if (!s) return null;
+
+    // 全角数字を半角へ
+    s = s.replace(/[０-９]/g, ch => String.fromCharCode(ch.charCodeAt(0) - 0xFEE0));
+    // 全角カンマ/全角スペース/円記号などを吸収
+    s = s.replace(/[，,]/g, "");
+    s = s.replace(/[￥¥円\s]/g, "");
+
+    if (!s) return null;
+    const n = Number(s);
+    return Number.isFinite(n) ? n : NaN;
+  }
 
   const whoShogo = document.getElementById("whoShogo");
   const whoKana = document.getElementById("whoKana");
@@ -159,16 +144,26 @@
     rateEl.value = (CONFIG.rate * 100) + "%";
   }
 
+  function setDash() {
+    contribEl.textContent = pocketEl.textContent = "—";
+    allowShownEl.textContent = surplusEl.textContent = "—";
+    diffEl.textContent = extraEl.textContent = "—";
+    outEl.value = "";
+  }
+
   function compute() {
     syncFixed();
 
-    const netVal = netEl.value.trim();
-    if (!netVal) return;
-
-    const net = Number(netVal);
-    if (!Number.isFinite(net) || net < 0) {
-      errEl.textContent = "当月手取りは0以上で入力してください。";
+    const net = parseMoney(netEl.value);
+    if (net === null) {
+      errEl.style.display = "none";
+      setDash();
+      return;
+    }
+    if (Number.isNaN(net) || net < 0) {
+      errEl.textContent = "当月手取りは 0以上の数値で入力してください（カンマ可）。";
       errEl.style.display = "block";
+      setDash();
       return;
     }
     errEl.style.display = "none";
@@ -178,13 +173,11 @@
     const excess = Math.max(0, net - avg);
     const extra = excess * CONFIG.rate;
 
-    // 元の計算
     let contrib = base + extra;
 
-    // 最低お小遣い保証（重要）
+    // 最低お小遣い保証：contrib <= net - allowance
     contrib = Math.min(contrib, net - CONFIG.allowance);
 
-    // 丸め
     if (roundOnEl.checked) contrib = round1000(contrib);
 
     // 念のため再クランプ
@@ -212,6 +205,7 @@
 （参考）超過分の家計追加：${yen(extra)}`;
   }
 
+  // 入力時に勝手にカンマ整形したい場合は後で追加も可能（今は計算だけ対応）
   [whoShogo, whoKana].forEach(el => el.addEventListener("change", compute));
   netEl.addEventListener("input", compute);
   roundOnEl.addEventListener("change", compute);
@@ -225,6 +219,7 @@
   };
 
   syncFixed();
+  compute();
 </script>
 </body>
 </html>
