@@ -11,20 +11,9 @@
       background: #fff;
       color: #111;
     }
-    .wrap {
-      max-width: 520px;
-      margin: 0 auto;
-      padding: 16px;
-    }
-    h1 {
-      font-size: 20px;
-      margin-bottom: 12px;
-    }
-    .card {
-      border: 1px solid #e5e5e5;
-      border-radius: 16px;
-      padding: 14px;
-    }
+    .wrap { max-width: 520px; margin: 0 auto; padding: 16px; }
+    h1 { font-size: 20px; margin: 0 0 12px; }
+    .card { border: 1px solid #e5e5e5; border-radius: 16px; padding: 14px; }
     .row {
       display: grid;
       grid-template-columns: 160px 1fr;
@@ -32,29 +21,41 @@
       align-items: center;
       margin-bottom: 10px;
     }
-    label {
-      font-size: 13px;
-      color: #333;
-    }
-    input[type="number"] {
+    label { font-size: 13px; color: #333; }
+    input[type="number"], input[type="text"] {
       width: 100%;
       padding: 10px 12px;
       font-size: 16px;
       border: 1px solid #ddd;
       border-radius: 10px;
+      background: #fff;
     }
+    input[readonly] { background: #f7f7f7; color:#333; }
     input[type="number"]::-webkit-inner-spin-button,
-    input[type="number"]::-webkit-outer-spin-button {
-      -webkit-appearance: none;
-      margin: 0;
+    input[type="number"]::-webkit-outer-spin-button { -webkit-appearance: none; margin: 0; }
+
+    .seg {
+      display:flex; gap: 10px; margin: 8px 0 14px;
+      background:#f4f4f4; border:1px solid #e5e5e5; border-radius: 14px; padding: 6px;
     }
-    .toggle {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      margin: 10px 0;
-      font-size: 13px;
+    .seg label{
+      flex:1; display:flex; justify-content:center; align-items:center;
+      padding:10px 0; border-radius: 12px; cursor:pointer;
+      font-size: 14px; color:#222;
+      user-select:none;
     }
+    .seg input { display:none; }
+    .seg input:checked + span {
+      background:#111; color:#fff;
+      border-radius: 12px;
+      padding:10px 0;
+      width:100%;
+      text-align:center;
+      display:block;
+    }
+    .seg span { width:100%; text-align:center; display:block; }
+
+    .toggle { display:flex; align-items:center; gap:8px; margin: 10px 0; font-size: 13px; }
     .result {
       margin-top: 12px;
       background: #fafafa;
@@ -62,28 +63,11 @@
       border-radius: 14px;
       padding: 12px;
     }
-    .kv {
-      display: flex;
-      justify-content: space-between;
-      padding: 6px 0;
-      border-bottom: 1px dashed #ddd;
-    }
-    .kv:last-child {
-      border-bottom: none;
-    }
-    .k {
-      font-size: 13px;
-      color: #444;
-    }
-    .v {
-      font-weight: 600;
-      font-variant-numeric: tabular-nums;
-    }
-    .err {
-      color: #b00020;
-      font-size: 13px;
-      margin-top: 8px;
-    }
+    .kv { display:flex; justify-content: space-between; padding: 6px 0; border-bottom: 1px dashed #ddd; }
+    .kv:last-child { border-bottom:none; }
+    .k { font-size: 13px; color:#444; }
+    .v { font-weight: 600; font-variant-numeric: tabular-nums; }
+    .err { color:#b00020; font-size: 13px; margin-top: 8px; }
     button {
       margin-top: 12px;
       padding: 10px 14px;
@@ -91,38 +75,55 @@
       border-radius: 12px;
       border: 1px solid #ddd;
       background: #fff;
+      cursor: pointer;
     }
     textarea {
       width: 100%;
       margin-top: 12px;
-      min-height: 140px;
+      min-height: 160px;
       padding: 10px;
       font-size: 13px;
       border-radius: 12px;
       border: 1px solid #ddd;
     }
+    .hint { font-size: 12px; color:#666; margin-top: 8px; line-height: 1.4; }
   </style>
 </head>
 <body>
   <div class="wrap">
-    <h1>手取り → 家計拠出＆お小遣い計算</h1>
+    <h1>手取り → 家計拠出＆手元</h1>
 
     <div class="card">
+      <!-- しょうご／かな 切替 -->
+      <div class="seg" role="tablist" aria-label="利用者選択">
+        <label>
+          <input type="radio" name="who" id="whoShogo" value="shogo" checked />
+          <span>しょうご</span>
+        </label>
+        <label>
+          <input type="radio" name="who" id="whoKana" value="kana" />
+          <span>かな</span>
+        </label>
+      </div>
+
+      <!-- 入力は当月手取りのみ -->
       <div class="row">
         <label>当月手取り（net）</label>
-        <input id="net" type="number" min="0" />
+        <input id="net" type="number" min="0" inputmode="numeric" placeholder="例：400000" />
       </div>
+
+      <!-- 固定（編集不可） -->
       <div class="row">
         <label>平均手取り（avg）</label>
-        <input id="avg" type="number" min="0" value="375419" />
+        <input id="avg" type="text" readonly />
       </div>
       <div class="row">
         <label>最低お小遣い</label>
-        <input id="allow" type="number" min="0" value="50000" />
+        <input id="allow" type="text" readonly />
       </div>
       <div class="row">
         <label>超過分の家計配分率</label>
-        <input id="rate" type="number" min="0" max="1" step="0.01" value="0.5" />
+        <input id="rate" type="text" readonly />
       </div>
 
       <div class="toggle">
@@ -141,42 +142,90 @@
 
       <button id="copyBtn">結果をコピー</button>
       <textarea id="out" readonly></textarea>
+
+      <div class="hint">
+        計算式：contrib = (avg - allowance) + max(0, net - avg) * rate ／ pocket = net - contrib（丸めON時は contrib を丸めてから pocket 再計算）
+      </div>
     </div>
   </div>
 
 <script>
+  // 固定パラメータ
+  const CONFIG = {
+    shogoAvg: 375419,
+    kanaAvg: 194420,
+    allowance: 50000,
+    rate: 0.5
+  };
+  const LS_KEY = "pocket-single-v1";
+
   const yen = n => n.toLocaleString("ja-JP") + "円";
-  const netEl = document.getElementById("net");
-  const avgEl = document.getElementById("avg");
-  const allowEl = document.getElementById("allow");
-  const rateEl = document.getElementById("rate");
-  const roundOnEl = document.getElementById("roundOn");
+  const pct = n => (n * 100).toFixed(0) + "%";
+  const round1000 = v => Math.round(v / 1000) * 1000;
 
-  const contribEl = document.getElementById("contrib");
-  const pocketEl = document.getElementById("pocket");
-  const diffEl = document.getElementById("diff");
-  const extraEl = document.getElementById("extra");
-  const errEl = document.getElementById("err");
-  const outEl = document.getElementById("out");
+  const $ = id => document.getElementById(id);
+  const whoShogo = $("whoShogo");
+  const whoKana  = $("whoKana");
+  const netEl = $("net");
+  const avgEl = $("avg");
+  const allowEl = $("allow");
+  const rateEl = $("rate");
+  const roundOnEl = $("roundOn");
 
-  function round1000(v) {
-    return Math.round(v / 1000) * 1000;
+  const contribEl = $("contrib");
+  const pocketEl = $("pocket");
+  const diffEl = $("diff");
+  const extraEl = $("extra");
+  const errEl = $("err");
+  const outEl = $("out");
+  const copyBtn = $("copyBtn");
+
+  function currentAvg() {
+    return whoKana.checked ? CONFIG.kanaAvg : CONFIG.shogoAvg;
+  }
+
+  function syncFixedFields() {
+    const avg = currentAvg();
+    avgEl.value = yen(avg);
+    allowEl.value = yen(CONFIG.allowance);
+    rateEl.value = pct(CONFIG.rate);
   }
 
   function compute() {
-    const net = Number(netEl.value);
-    const avg = Number(avgEl.value);
-    const allowance = Number(allowEl.value);
-    const rate = Number(rateEl.value);
+    syncFixedFields();
 
-    if ([net, avg, allowance, rate].some(v => Number.isNaN(v)) || rate < 0 || rate > 1) {
+    const netRaw = netEl.value.trim();
+    if (!netRaw) {
+      // 未入力時はダッシュ
+      contribEl.textContent = "—";
+      pocketEl.textContent = "—";
+      diffEl.textContent = "—";
+      extraEl.textContent = "—";
+      outEl.value = "";
+      errEl.style.display = "none";
+      save();
+      return;
+    }
+
+    const net = Number(netRaw);
+    if (!Number.isFinite(net) || net < 0) {
       errEl.style.display = "block";
-      errEl.textContent = "入力値を正しく入力してください。";
+      errEl.textContent = "当月手取り（net）は0以上の数値で入力してください。";
+      contribEl.textContent = "—";
+      pocketEl.textContent = "—";
+      diffEl.textContent = "—";
+      extraEl.textContent = "—";
+      outEl.value = "";
+      save();
       return;
     }
     errEl.style.display = "none";
 
-    const base = avg - allowance;
+    const avg = currentAvg();
+    const allowance = CONFIG.allowance;
+    const rate = CONFIG.rate;
+
+    const base = (avg - allowance);
     const excess = Math.max(0, net - avg);
     const extra = excess * rate;
 
@@ -190,28 +239,65 @@
     diffEl.textContent = yen(net - avg);
     extraEl.textContent = yen(extra);
 
+    const whoLabel = whoKana.checked ? "かな" : "しょうご";
     outEl.value =
-`【当月 家計拠出・手元】
+`【当月 家計拠出・手元（${whoLabel}）】
 ・当月手取り：${yen(net)}
+・平均手取り：${yen(avg)}
 ・家計拠出額：${yen(contrib)}
 ・手元：${yen(pocket)}
 ・平均差分：${yen(net - avg)}
 ・超過分按分（家計追加）：${yen(extra)}`;
+
+    save();
   }
 
-  ["input", "change"].forEach(ev => {
-    netEl.addEventListener(ev, compute);
-    avgEl.addEventListener(ev, compute);
-    allowEl.addEventListener(ev, compute);
-    rateEl.addEventListener(ev, compute);
-    roundOnEl.addEventListener(ev, compute);
-  });
-
-  document.getElementById("copyBtn").onclick = async () => {
+  async function copy() {
     if (!outEl.value) return;
     await navigator.clipboard.writeText(outEl.value);
-    alert("コピーしました");
-  };
+    const old = copyBtn.textContent;
+    copyBtn.textContent = "コピーしました";
+    setTimeout(() => (copyBtn.textContent = old), 1200);
+  }
+
+  function save() {
+    const data = {
+      who: whoKana.checked ? "kana" : "shogo",
+      net: netEl.value,
+      roundOn: roundOnEl.checked
+    };
+    localStorage.setItem(LS_KEY, JSON.stringify(data));
+  }
+
+  function load() {
+    const q = new URLSearchParams(location.search);
+    // URL例: ?who=shogo&net=400000
+    const who = q.get("who");
+    if (who === "kana") whoKana.checked = true;
+    if (who === "shogo") whoShogo.checked = true;
+    if (q.has("net")) netEl.value = q.get("net");
+    if (q.has("round")) roundOnEl.checked = q.get("round") !== "0";
+
+    const raw = localStorage.getItem(LS_KEY);
+    if (!raw) return;
+    const data = JSON.parse(raw);
+
+    // URLが無い場合だけ復元
+    if (!q.has("who") && data.who === "kana") whoKana.checked = true;
+    if (!q.has("who") && data.who === "shogo") whoShogo.checked = true;
+    if (!q.has("net") && typeof data.net === "string") netEl.value = data.net;
+    if (!q.has("round") && typeof data.roundOn === "boolean") roundOnEl.checked = data.roundOn;
+  }
+
+  // イベント
+  [whoShogo, whoKana].forEach(el => el.addEventListener("change", compute));
+  netEl.addEventListener("input", compute);
+  roundOnEl.addEventListener("change", compute);
+  copyBtn.addEventListener("click", copy);
+
+  // 初期化
+  load();
+  compute();
 </script>
 </body>
 </html>
