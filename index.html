@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>家計拠出 & お小遣い（妻固定 / 夫レンジ）</title>
+  <title>お小遣い計算（妻固定 / 夫レンジ）</title>
   <style>
     :root{
       --bg:#f6f4ef;
@@ -14,73 +14,41 @@
       --soft:#f3efe7;
 
       --accent:#2f6f5f;
-      --accent2:#1f5a4c;
       --accentSoft:#e1f0eb;
 
-      --warn:#b45309;
-      --warnSoft:#fff7ed;
+      --radius:16px;
+      --radiusS:12px;
+      --shadow: 0 12px 34px rgba(23, 32, 28, .08);
 
-      --radius:18px;
-      --radiusS:14px;
-      --shadow: 0 14px 40px rgba(23, 32, 28, .08);
-
-      --mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
       --sans: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans JP", "Hiragino Kaku Gothic ProN", "Yu Gothic", sans-serif;
+      --mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
     }
-
     *{ box-sizing:border-box; }
     body{
       margin:0;
       font-family: var(--sans);
-      color:var(--text);
+      color: var(--text);
       background:
-        radial-gradient(1200px 700px at 12% -10%, #fff 0%, rgba(255,255,255,0) 60%),
-        radial-gradient(1100px 600px at 92% 12%, rgba(225,240,235,.85) 0%, rgba(255,255,255,0) 55%),
+        radial-gradient(1100px 650px at 15% -10%, #fff 0%, rgba(255,255,255,0) 60%),
+        radial-gradient(1100px 650px at 92% 12%, rgba(225,240,235,.85) 0%, rgba(255,255,255,0) 55%),
         var(--bg);
     }
-
     .wrap{
-      max-width: 880px;
+      max-width: 760px;
       margin: 0 auto;
       padding: 18px 14px 34px;
     }
-
     header{
       display:flex;
-      align-items:flex-end;
+      align-items:center;
       justify-content:space-between;
       gap:12px;
-      margin: 6px 0 14px;
-    }
-    .titleBlock{
-      display:flex;
-      flex-direction:column;
-      gap:6px;
+      margin: 6px 0 12px;
     }
     h1{
-      font-size: 18px;
-      margin: 0;
-      letter-spacing:.02em;
-    }
-    .sub{
       margin:0;
-      font-size: 12px;
-      color: var(--muted);
-      line-height: 1.55;
-    }
-
-    .pill{
-      display:inline-flex;
-      align-items:center;
-      gap:8px;
-      padding: 9px 12px;
-      border-radius: 999px;
-      background: var(--accentSoft);
-      border: 1px solid rgba(47,111,95,.18);
-      color: #244b41;
-      font-size: 12px;
-      font-weight: 750;
-      white-space: nowrap;
+      font-size: 16px;
+      letter-spacing:.02em;
     }
 
     .card{
@@ -91,204 +59,103 @@
       padding: 14px;
     }
 
-    .topGrid{
-      display:grid;
-      grid-template-columns: 1.1fr .9fr;
-      gap: 12px;
-      align-items: stretch;
-      margin-top: 8px;
-    }
-    @media (max-width: 860px){
-      .topGrid{ grid-template-columns: 1fr; }
-      header{ flex-direction:column; align-items:flex-start; }
-    }
-
-    .hero{
-      border:1px solid rgba(47,111,95,.18);
-      background: linear-gradient(180deg, rgba(225,240,235,.7), rgba(255,255,255,.9));
-      border-radius: var(--radius);
-      padding: 14px;
-      position: relative;
-      overflow: hidden;
-    }
-    .hero::after{
-      content:"";
-      position:absolute;
-      inset:auto -60px -70px auto;
-      width: 220px;
-      height: 220px;
-      background: radial-gradient(circle at 30% 30%, rgba(47,111,95,.20), rgba(47,111,95,0) 60%);
-      transform: rotate(15deg);
-      pointer-events:none;
-    }
-
-    .heroLabel{
-      display:flex;
-      align-items:center;
-      justify-content:space-between;
-      gap:10px;
-      margin-bottom: 6px;
-    }
-    .heroLabel h2{
-      margin:0;
-      font-size: 13px;
-      letter-spacing:.02em;
-      color: #244b41;
-    }
-    .heroValue{
-      display:flex;
-      align-items:baseline;
-      justify-content:space-between;
-      gap: 12px;
-      padding-top: 8px;
-    }
-    .heroValue .bigNum{
-      font-size: 34px;
-      font-weight: 900;
-      letter-spacing:.01em;
-      color: var(--accent2);
-      line-height: 1.05;
-      font-variant-numeric: tabular-nums;
-    }
-    .heroValue .unit{
-      font-size: 14px;
-      font-weight: 800;
-      color: var(--accent2);
-      margin-left: 4px;
-    }
-    .heroValue .mini{
-      text-align:right;
-      font-size: 12px;
-      color: var(--muted);
-      line-height: 1.6;
-      font-variant-numeric: tabular-nums;
-    }
-    .heroValue .mini b{
-      color: var(--text);
-    }
-
-    .inputs{
-      border:1px solid var(--line);
-      background: rgba(255,255,255,.82);
-      border-radius: var(--radius);
-      padding: 14px;
-    }
-
     .grid2{
       display:grid;
       grid-template-columns: 1fr 1fr;
       gap: 10px;
     }
-    .row{
-      display:grid;
-      grid-template-columns: 180px 1fr;
-      gap:10px;
-      align-items:center;
-      margin: 10px 0;
+    @media (max-width: 640px){
+      .grid2{ grid-template-columns: 1fr; }
     }
+
     label{
+      display:flex;
+      align-items:center;
+      gap:8px;
       font-size: 12px;
       color: var(--muted);
       font-weight: 750;
+      margin: 6px 0 6px;
       white-space: nowrap;
     }
     input, select{
-      width: 100%;
+      width:100%;
       padding: 12px 12px;
       border-radius: 12px;
-      border: 1px solid var(--line);
-      background: #fff;
+      border:1px solid var(--line);
+      background:#fff;
       font-size: 16px;
-      outline: none;
-      min-width:0;
+      outline:none;
     }
     input:focus, select:focus{
       border-color: rgba(47,111,95,.45);
       box-shadow: 0 0 0 4px rgba(47,111,95,.12);
     }
+
     .readonly{
       background: var(--soft);
       color: var(--muted);
     }
-    @media (max-width: 640px){
-      .row{ grid-template-columns: 1fr; gap:6px; }
-      .grid2{ grid-template-columns: 1fr; }
-    }
 
-    .split{
+    .hero{
+      margin-top: 12px;
+      border-radius: var(--radius);
+      border:1px solid rgba(47,111,95,.18);
+      background: linear-gradient(180deg, rgba(225,240,235,.7), rgba(255,255,255,.95));
+      padding: 14px;
       display:grid;
       grid-template-columns: 1fr 1fr;
       gap: 12px;
-      margin-top: 12px;
+      align-items: center;
     }
-    @media (max-width: 900px){
-      .split{ grid-template-columns: 1fr; }
+    @media (max-width: 640px){
+      .hero{ grid-template-columns: 1fr; }
     }
 
-    .panel{
-      border:1px solid var(--line);
-      border-radius: var(--radius);
-      background:#fbfaf7;
-      padding: 12px;
-    }
-    .panel h3{
-      margin: 0 0 6px;
-      font-size: 14px;
-      letter-spacing:.02em;
-    }
-    .meta{
+    .bigLabel{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:10px;
+      margin-bottom: 6px;
+      color: #244b41;
+      font-weight: 850;
       font-size: 12px;
+    }
+    .bigValue{
+      font-size: 34px;
+      font-weight: 900;
+      letter-spacing:.01em;
+      color: var(--accent);
+      line-height: 1.05;
+      font-variant-numeric: tabular-nums;
+    }
+    .subValue{
+      margin-top: 4px;
       color: var(--muted);
-      margin: 0 0 10px;
+      font-size: 12px;
+      font-variant-numeric: tabular-nums;
       line-height: 1.55;
     }
 
-    .kv{
+    .miniRow{
+      margin-top: 10px;
       display:flex;
       justify-content:space-between;
       gap:10px;
-      padding: 8px 0;
-      border-bottom: 1px dashed var(--line);
+      padding-top: 10px;
+      border-top: 1px dashed rgba(47,111,95,.18);
       font-variant-numeric: tabular-nums;
     }
-    .kv:last-child{ border-bottom:none; }
-    .k{ color: var(--muted); font-size: 13px; white-space:nowrap; }
-    .v{ font-weight: 850; text-align:right; }
-    .big .v{ font-size: 18px; }
+    .miniRow .k{ color: var(--muted); font-size: 12px; }
+    .miniRow .v{ font-weight: 850; }
 
-    .sumPanel{
-      margin-top: 12px;
-      border:1px solid var(--line);
-      border-radius: var(--radius);
-      background:#fbfaf7;
-      padding: 12px;
-    }
-    .sumPanel h3{
-      margin:0 0 6px;
-      font-size: 14px;
-      letter-spacing:.02em;
-    }
-
-    .hint{
+    .actions{
       margin-top: 12px;
       display:flex;
       gap:10px;
-      align-items:flex-start;
-      padding: 10px 12px;
-      border-radius: 14px;
-      border: 1px solid rgba(180,83,9,.2);
-      background: var(--warnSoft);
-      color: #7c3a07;
-      font-size: 12px;
-      line-height: 1.55;
-    }
-
-    .btnRow{
-      display:flex;
-      gap:10px;
+      flex-wrap:wrap;
       align-items:center;
-      margin-top: 12px;
-      flex-wrap: wrap;
     }
     button{
       border:1px solid rgba(47,111,95,.22);
@@ -305,7 +172,7 @@
     textarea{
       width:100%;
       margin-top: 10px;
-      min-height: 170px;
+      min-height: 150px;
       border-radius: 14px;
       border:1px solid var(--line);
       padding: 12px;
@@ -316,17 +183,55 @@
       background:#fff;
     }
 
-    .badge{
+    /* --- tooltip (hover on desktop, tap on mobile) --- */
+    .tip{
+      position: relative;
       display:inline-flex;
       align-items:center;
-      gap:6px;
-      font-size: 11px;
-      font-weight: 850;
-      color:#244b41;
-      background: var(--accentSoft);
-      border: 1px solid rgba(47,111,95,.18);
+      justify-content:center;
+      width: 18px;
+      height: 18px;
       border-radius: 999px;
-      padding: 6px 9px;
+      border: 1px solid rgba(96,113,105,.35);
+      color: var(--muted);
+      font-size: 12px;
+      line-height: 1;
+      background: rgba(255,255,255,.8);
+      cursor: pointer;
+      user-select: none;
+    }
+    .tipPanel{
+      position:absolute;
+      top: 26px;
+      right: 0;
+      width: min(340px, calc(100vw - 40px));
+      background:#fff;
+      border:1px solid var(--line);
+      border-radius: 14px;
+      box-shadow: 0 18px 48px rgba(23,32,28,.12);
+      padding: 10px 12px;
+      color: var(--text);
+      font-size: 12px;
+      line-height: 1.55;
+      display:none;
+      z-index: 20;
+    }
+    .tipPanel .muted{ color: var(--muted); }
+    .tip[data-open="true"] .tipPanel{ display:block; }
+    @media (hover:hover){
+      .tip:hover .tipPanel{ display:block; }
+      .tip[data-open="true"] .tipPanel{ display:block; }
+    }
+
+    .rightPill{
+      font-family: var(--mono);
+      font-size: 11px;
+      color: var(--muted);
+      border: 1px solid var(--line);
+      background: rgba(255,255,255,.7);
+      padding: 7px 9px;
+      border-radius: 999px;
+      white-space: nowrap;
     }
   </style>
 </head>
@@ -334,115 +239,94 @@
 <body>
   <div class="wrap">
     <header>
-      <div class="titleBlock">
-        <h1>家計拠出 & お小遣い（妻固定 / 夫レンジ）</h1>
-        <p class="sub">
-          妻：家計拠出 14万円固定。夫：手取りを入力 → レンジでお小遣い決定 → 残りを家計へ。
-          <span class="badge">夫レンジ：55k / 60k / 65k / 70k</span>
-        </p>
-      </div>
-      <div class="pill" id="rangePill">夫レンジ判定：—</div>
+      <h1>お小遣い計算</h1>
+
+      <div class="rightPill" id="rangePill">レンジ：—</div>
     </header>
 
     <div class="card">
-
-      <!-- TOP: Allowance hero + Inputs -->
-      <div class="topGrid">
-        <div class="hero">
-          <div class="heroLabel">
-            <h2>夫のお小遣い（このツールの結果）</h2>
-          </div>
-
-          <div class="heroValue">
-            <div>
-              <span class="bigNum" id="heroAllowance">—</span><span class="unit">円</span>
-            </div>
-            <div class="mini">
-              家計に入れる（夫）<br><b id="heroContrib">—</b>
-            </div>
-          </div>
-        </div>
-
-        <div class="inputs">
-          <div class="grid2">
-            <div>
-              <label for="year">年</label>
-              <input id="year" inputmode="numeric" />
-            </div>
-            <div>
-              <label for="month">月</label>
-              <select id="month">
-                <option value="1">1月</option><option value="2">2月</option><option value="3">3月</option><option value="4">4月</option>
-                <option value="5">5月</option><option value="6">6月</option><option value="7">7月</option><option value="8">8月</option>
-                <option value="9">9月</option><option value="10">10月</option><option value="11">11月</option><option value="12">12月</option>
-              </select>
-            </div>
-          </div>
-
-          <div class="row">
-            <label for="net">夫の当月手取り（円）</label>
-            <input id="net" inputmode="numeric" placeholder="" />
-          </div>
-
-          <div class="row">
-            <label>妻：家計拠出（固定）</label>
-            <input class="readonly" id="wifeFixed" readonly value="140,000" />
-          </div>
-        </div>
-      </div>
-
-      <!-- DETAIL PANELS -->
-      <div class="split">
-        <div class="panel">
-          <h3>夫（レンジ制）</h3>
-          <p class="meta">
-            手取りを「千円単位で四捨五入」してレンジ判定。
-          </p>
-
-          <div class="kv big">
-            <div class="k">お小遣い</div>
-            <div class="v" id="hAllowance">—</div>
-          </div>
-          <div class="kv">
-            <div class="k">家計拠出（夫）</div>
-            <div class="v" id="hContrib">—</div>
-          </div>
-        </div>
-
-        <div class="panel">
-          <h3>妻（固定拠出）</h3>
-          <p class="meta">
-            家計：14万円固定（運用が分かりやすい方式）。
-          </p>
-
-          <div class="kv big">
-            <div class="k">家計拠出（妻）</div>
-            <div class="v" id="wContrib">140,000円</div>
-          </div>
-          <div class="kv">
-            <div class="k">お小遣い（妻）</div>
-            <div class="v" style="color:var(--muted)">（入力なし / 固定運用）</div>
-          </div>
-        </div>
-      </div>
-
-      <div class="sumPanel">
-        <h3>夫婦合計</h3>
-        <div class="kv big">
-          <div class="k">家計拠出 合計（夫 + 妻）</div>
-          <div class="v" id="totalContrib">—</div>
-        </div>
-      </div>
-
-      <div class="hint">
-        <div>📌</div>
+      <div class="grid2">
         <div>
-          夫レンジ（四捨五入後の手取りで判定）：<br>
-          ～335,000 → 55,000 / 335,001～375,000 → 60,000 / 375,001～400,000 → 65,000 / 400,001～ → 70,000
+          <label for="year">年</label>
+          <input id="year" inputmode="numeric" />
+        </div>
+        <div>
+          <label for="month">月</label>
+          <select id="month">
+            <option value="1">1月</option><option value="2">2月</option><option value="3">3月</option><option value="4">4月</option>
+            <option value="5">5月</option><option value="6">6月</option><option value="7">7月</option><option value="8">8月</option>
+            <option value="9">9月</option><option value="10">10月</option><option value="11">11月</option><option value="12">12月</option>
+          </select>
         </div>
       </div>
 
-      <div class="btnRow">
+      <div style="margin-top:10px;">
+        <label for="net">
+          夫の当月手取り（円）
+          <span class="tip" id="tipNet" aria-label="説明" title="説明">
+            i
+            <span class="tipPanel">
+              <b>入力のコツ</b><br>
+              ・カンマありでもOK（例：413,088）<br>
+              ・全角数字でもOK<br>
+              <span class="muted">入力するとURLが自動更新されます（共有用）</span>
+            </span>
+          </span>
+        </label>
+        <input id="net" inputmode="numeric" placeholder="" />
+      </div>
+
+      <div style="margin-top:10px;">
+        <label>
+          妻：家計拠出（固定）
+          <span class="tip" id="tipWife" aria-label="説明" title="説明">
+            i
+            <span class="tipPanel">
+              妻は<strong>毎月14万円を家計に拠出</strong>する固定運用です。<br>
+              このツールは「夫のお小遣い」を計算する用途に絞っています。
+            </span>
+          </span>
+        </label>
+        <input class="readonly" readonly value="140,000" />
+      </div>
+
+      <div class="hero" aria-live="polite">
+        <div>
+          <div class="bigLabel">
+            <span>
+              夫のお小遣い
+              <span class="tip" id="tipRange" aria-label="レンジ説明" title="レンジ説明">
+                i
+                <span class="tipPanel">
+                  <b>レンジ（四捨五入後の手取りで判定）</b><br>
+                  ～335,000 → 55,000<br>
+                  335,001～375,000 → 60,000<br>
+                  375,001～400,000 → 65,000<br>
+                  400,001～ → 70,000<br>
+                  <span class="muted">手取りは千円単位で四捨五入してから判定します。</span>
+                </span>
+              </span>
+            </span>
+          </div>
+          <div class="bigValue" id="allowanceBig">—</div>
+          <div class="subValue" id="allowanceSub">—</div>
+        </div>
+
+        <div>
+          <div class="bigLabel">
+            <span>家計に入れる（夫）</span>
+          </div>
+          <div class="bigValue" id="contribBig">—</div>
+          <div class="subValue">手取り − お小遣い</div>
+
+          <div class="miniRow">
+            <div class="k">家計拠出 合計（夫+妻）</div>
+            <div class="v" id="totalContrib">—</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="actions">
         <button id="copyBtn">LINE用フォーマットをコピー</button>
       </div>
 
@@ -451,32 +335,21 @@
   </div>
 
 <script>
-  // ====== Constants ======
   const WIFE_FIXED_CONTRIB = 140000;
 
-  // ====== Helpers ======
   function toNumber(s){
     if(!s) return null;
     let t = String(s).trim();
-    // 全角→半角
     t = t.replace(/[０-９]/g, c => String.fromCharCode(c.charCodeAt(0) - 0xFEE0));
-    // カンマ/円/空白除去
     t = t.replace(/[，,￥¥円\\s]/g, "");
     if(!t) return null;
     const n = Number(t);
     return Number.isFinite(n) ? n : null;
   }
-  function yen(n){
-    return n.toLocaleString("ja-JP") + "円";
-  }
-  function fmtComma(n){
-    return n.toLocaleString("ja-JP");
-  }
-  function roundToThousand(n){
-    return Math.round(n / 1000) * 1000;
-  }
+  function yen(n){ return n.toLocaleString("ja-JP") + "円"; }
+  function fmtComma(n){ return n.toLocaleString("ja-JP"); }
+  function roundToThousand(n){ return Math.round(n / 1000) * 1000; }
 
-  // ====== Husband allowance (revised ranges) ======
   function calcHusbandAllowanceByRange(net){
     const r = roundToThousand(net);
 
@@ -486,7 +359,6 @@
     return { allowance: 70000, range: "400,001～（四捨五入後 " + fmtComma(r) + "）" };
   }
 
-  // ====== URL params ======
   function setQueryFromState(){
     const url = new URL(location.href);
     const net = toNumber(netEl.value);
@@ -507,9 +379,9 @@
     const defaultYear = now.getFullYear();
     const defaultMonth = now.getMonth() + 1;
 
-    const qNet = p.get("net");   // ?net=413088
-    const qYear = p.get("year"); // ?year=2026
-    const qMonth = p.get("month"); // ?month=1
+    const qNet = p.get("net");
+    const qYear = p.get("year");
+    const qMonth = p.get("month");
 
     const y = qYear ? toNumber(qYear) : defaultYear;
     yearEl.value = (y != null) ? String(Math.trunc(y)) : String(defaultYear);
@@ -526,18 +398,17 @@
     setQueryFromState();
   }
 
-  // ====== Output ======
-  function buildOutput(year, month, net, hAllowance, hContrib, totalContrib){
+  function buildOutput(year, month, net, allowance, contrib, total){
     const ym = (year && month) ? `${year}年 ${month}月` : "";
-    return `【お小遣い & 家計拠出】${ym ? `\n▶ 対象：${ym}` : ""}
+    return `【お小遣い & 家計拠出】${ym ? `\\n▶ 対象：${ym}` : ""}
 
 ■ 妻：家計拠出（固定） ${yen(WIFE_FIXED_CONTRIB)}
 
 ■ 夫：当月手取り ${yen(net)}
-・お小遣い ${yen(hAllowance)}
-・家計拠出 ${yen(hContrib)}
+・お小遣い ${yen(allowance)}
+・家計拠出 ${yen(contrib)}
 
-■ 夫婦：家計拠出 合計 ${yen(totalContrib)}
+■ 夫婦：家計拠出 合計 ${yen(total)}
 `;
   }
 
@@ -547,90 +418,91 @@
     const month = toNumber(monthEl.value);
 
     if(net == null || net < 0){
-      // clear
-      heroAllowanceEl.textContent = "—";
-      heroContribEl.textContent = "—";
-      hAllowanceEl.textContent = "—";
-      hContribEl.textContent = "—";
-      totalContribEl.textContent = "—";
-      rangePill.textContent = "夫レンジ判定：—";
-      outEl.value = "";
+      allowanceBig.textContent = "—";
+      allowanceSub.textContent = "—";
+      contribBig.textContent = "—";
+      totalContrib.textContent = "—";
+      rangePill.textContent = "レンジ：—";
+      out.value = "";
       setQueryFromState();
       return;
     }
 
     const { allowance, range } = calcHusbandAllowanceByRange(net);
+    const contrib = Math.max(0, net - allowance);
+    const total = contrib + WIFE_FIXED_CONTRIB;
 
-    // 夫：家計拠出 = 手取り - お小遣い
-    const hContrib = Math.max(0, net - allowance);
+    allowanceBig.textContent = fmtComma(allowance) + "円";
+    allowanceSub.textContent = "（" + range + "）";
 
-    // 夫婦合計
-    const totalContrib = hContrib + WIFE_FIXED_CONTRIB;
+    contribBig.textContent = fmtComma(contrib) + "円";
+    totalContrib.textContent = yen(total);
 
-    // Hero
-    heroAllowanceEl.textContent = fmtComma(allowance);
-    heroContribEl.textContent = yen(hContrib);
+    rangePill.textContent = "レンジ：" + (range.replace("（", "（").replace("）", "）"));
 
-    // Panels
-    hAllowanceEl.textContent = yen(allowance);
-    hContribEl.textContent = yen(hContrib);
-    totalContribEl.textContent = yen(totalContrib);
+    out.value = buildOutput(year, month, net, allowance, contrib, total);
 
-    rangePill.textContent = "夫レンジ判定：" + range;
-
-    // LINE output (fix: real newlines)
-    outEl.value = buildOutput(year, month, net, allowance, hContrib, totalContrib);
-
-    // prettify input
+    // prettify
     netEl.value = fmtComma(net);
 
     setQueryFromState();
   }
 
-  // ====== DOM ======
+  // tooltip tap support
+  function setupTip(el){
+    el.addEventListener("click", (e) => {
+      e.stopPropagation();
+      const open = el.getAttribute("data-open") === "true";
+      document.querySelectorAll(".tip[data-open='true']").forEach(t => t.setAttribute("data-open","false"));
+      el.setAttribute("data-open", open ? "false" : "true");
+    });
+  }
+  document.addEventListener("click", () => {
+    document.querySelectorAll(".tip[data-open='true']").forEach(t => t.setAttribute("data-open","false"));
+  });
+
+  // DOM
   const netEl = document.getElementById("net");
   const yearEl = document.getElementById("year");
   const monthEl = document.getElementById("month");
 
   const rangePill = document.getElementById("rangePill");
-
-  const heroAllowanceEl = document.getElementById("heroAllowance");
-  const heroContribEl = document.getElementById("heroContrib");
-
-  const outEl = document.getElementById("out");
-  const hAllowanceEl = document.getElementById("hAllowance");
-  const hContribEl = document.getElementById("hContrib");
-  const totalContribEl = document.getElementById("totalContrib");
+  const allowanceBig = document.getElementById("allowanceBig");
+  const allowanceSub = document.getElementById("allowanceSub");
+  const contribBig = document.getElementById("contribBig");
+  const totalContrib = document.getElementById("totalContrib");
+  const out = document.getElementById("out");
   const copyBtn = document.getElementById("copyBtn");
 
-  // ====== Events ======
+  setupTip(document.getElementById("tipNet"));
+  setupTip(document.getElementById("tipWife"));
+  setupTip(document.getElementById("tipRange"));
+
   initFromQuery();
+  recalc();
 
   netEl.addEventListener("input", recalc);
   netEl.addEventListener("blur", recalc);
 
-  yearEl.addEventListener("input", setQueryFromState);
+  monthEl.addEventListener("change", recalc);
+
   yearEl.addEventListener("blur", () => {
     const y = toNumber(yearEl.value);
     if(y != null) yearEl.value = String(Math.trunc(y));
     setQueryFromState();
   });
-
-  monthEl.addEventListener("change", recalc);
+  yearEl.addEventListener("input", setQueryFromState);
 
   copyBtn.addEventListener("click", async () => {
-    if(!outEl.value) return;
+    if(!out.value) return;
     try{
-      await navigator.clipboard.writeText(outEl.value);
+      await navigator.clipboard.writeText(out.value);
       copyBtn.textContent = "コピーしました";
       setTimeout(() => copyBtn.textContent = "LINE用フォーマットをコピー", 1200);
     }catch(e){
       alert("コピーに失敗しました。テキスト欄から手動でコピーしてください。");
     }
   });
-
-  // 初回
-  recalc();
 </script>
 </body>
 </html>
