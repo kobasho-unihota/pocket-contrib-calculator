@@ -17,7 +17,6 @@
       --accentSoft:#e1f0eb;
 
       --radius:16px;
-      --radiusS:12px;
       --shadow: 0 12px 34px rgba(23, 32, 28, .08);
 
       --sans: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans JP", "Hiragino Kaku Gothic ProN", "Yu Gothic", sans-serif;
@@ -49,6 +48,17 @@
       margin:0;
       font-size: 16px;
       letter-spacing:.02em;
+    }
+
+    .rightPill{
+      font-family: var(--mono);
+      font-size: 11px;
+      color: var(--muted);
+      border: 1px solid var(--line);
+      background: rgba(255,255,255,.7);
+      padding: 7px 9px;
+      border-radius: 999px;
+      white-space: nowrap;
     }
 
     .card{
@@ -183,27 +193,35 @@
       background:#fff;
     }
 
-    /* --- tooltip (hover on desktop, tap on mobile) --- */
-    .tip{
-      position: relative;
-      display:inline-flex;
-      align-items:center;
-      justify-content:center;
+    /* i button */
+    .iBtn{
       width: 18px;
       height: 18px;
       border-radius: 999px;
+      display:inline-flex;
+      align-items:center;
+      justify-content:center;
       border: 1px solid rgba(96,113,105,.35);
+      background: rgba(255,255,255,.9);
       color: var(--muted);
       font-size: 12px;
       line-height: 1;
-      background: rgba(255,255,255,.8);
       cursor: pointer;
       user-select: none;
+      flex: 0 0 auto;
     }
-    .tipPanel{
+
+    /* Desktop hover tooltip (safe width, clamped) */
+    .tooltip{
+      position: relative;
+      display:inline-flex;
+      align-items:center;
+    }
+    .tooltipPanel{
       position:absolute;
       top: 26px;
-      right: 0;
+      left: 50%;
+      transform: translateX(-50%);
       width: min(340px, calc(100vw - 40px));
       background:#fff;
       border:1px solid var(--line);
@@ -215,24 +233,64 @@
       line-height: 1.55;
       display:none;
       z-index: 20;
+      text-align:left;
     }
-    .tipPanel .muted{ color: var(--muted); }
-    .tip[data-open="true"] .tipPanel{ display:block; }
+    .tooltipPanel .muted{ color: var(--muted); }
     @media (hover:hover){
-      .tip:hover .tipPanel{ display:block; }
-      .tip[data-open="true"] .tipPanel{ display:block; }
+      .tooltip:hover .tooltipPanel{ display:block; }
     }
 
-    .rightPill{
-      font-family: var(--mono);
-      font-size: 11px;
-      color: var(--muted);
-      border: 1px solid var(--line);
-      background: rgba(255,255,255,.7);
-      padding: 7px 9px;
-      border-radius: 999px;
-      white-space: nowrap;
+    /* Mobile bottom sheet (no offscreen) */
+    .sheetOverlay{
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,.22);
+      display:none;
+      z-index: 999;
     }
+    .sheet{
+      position: fixed;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: #fff;
+      border-top-left-radius: 18px;
+      border-top-right-radius: 18px;
+      box-shadow: 0 -18px 50px rgba(0,0,0,.18);
+      transform: translateY(110%);
+      transition: transform .22s ease;
+      z-index: 1000;
+      padding: 12px 14px 14px;
+    }
+    .sheetHeader{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:10px;
+      margin-bottom: 8px;
+    }
+    .sheetTitle{
+      font-weight: 900;
+      font-size: 13px;
+      margin:0;
+    }
+    .sheetClose{
+      border: 1px solid var(--line);
+      background: var(--soft);
+      color: var(--text);
+      border-radius: 10px;
+      padding: 8px 10px;
+      font-weight: 850;
+      cursor:pointer;
+    }
+    .sheetBody{
+      color: var(--text);
+      font-size: 12px;
+      line-height: 1.6;
+    }
+    .sheetBody .muted{ color: var(--muted); }
+    .sheetOpen .sheetOverlay{ display:block; }
+    .sheetOpen .sheet{ transform: translateY(0); }
   </style>
 </head>
 
@@ -240,7 +298,6 @@
   <div class="wrap">
     <header>
       <h1>お小遣い計算</h1>
-
       <div class="rightPill" id="rangePill">レンジ：—</div>
     </header>
 
@@ -263,9 +320,11 @@
       <div style="margin-top:10px;">
         <label for="net">
           夫の当月手取り（円）
-          <span class="tip" id="tipNet" aria-label="説明" title="説明">
-            i
-            <span class="tipPanel">
+
+          <!-- desktop hover tooltip + mobile sheet trigger -->
+          <span class="tooltip">
+            <span class="iBtn" data-sheet-title="入力のコツ" data-sheet-body="・カンマありでもOK（例：413,088）<br>・全角数字でもOK<br><span class='muted'>入力するとURLが自動更新されます（共有用）</span>">i</span>
+            <span class="tooltipPanel">
               <b>入力のコツ</b><br>
               ・カンマありでもOK（例：413,088）<br>
               ・全角数字でもOK<br>
@@ -279,9 +338,9 @@
       <div style="margin-top:10px;">
         <label>
           妻：家計拠出（固定）
-          <span class="tip" id="tipWife" aria-label="説明" title="説明">
-            i
-            <span class="tipPanel">
+          <span class="tooltip">
+            <span class="iBtn" data-sheet-title="妻の運用" data-sheet-body="妻は<strong>毎月14万円を家計に拠出</strong>する固定運用です。<br>このツールは「夫のお小遣い」を計算する用途に絞っています。">i</span>
+            <span class="tooltipPanel">
               妻は<strong>毎月14万円を家計に拠出</strong>する固定運用です。<br>
               このツールは「夫のお小遣い」を計算する用途に絞っています。
             </span>
@@ -295,9 +354,9 @@
           <div class="bigLabel">
             <span>
               夫のお小遣い
-              <span class="tip" id="tipRange" aria-label="レンジ説明" title="レンジ説明">
-                i
-                <span class="tipPanel">
+              <span class="tooltip">
+                <span class="iBtn" data-sheet-title="レンジ判定" data-sheet-body="<b>レンジ（四捨五入後の手取りで判定）</b><br>～335,000 → 55,000<br>335,001～375,000 → 60,000<br>375,001～400,000 → 65,000<br>400,001～ → 70,000<br><span class='muted'>手取りは千円単位で四捨五入してから判定します。</span>">i</span>
+                <span class="tooltipPanel">
                   <b>レンジ（四捨五入後の手取りで判定）</b><br>
                   ～335,000 → 55,000<br>
                   335,001～375,000 → 60,000<br>
@@ -313,9 +372,7 @@
         </div>
 
         <div>
-          <div class="bigLabel">
-            <span>家計に入れる（夫）</span>
-          </div>
+          <div class="bigLabel"><span>家計に入れる（夫）</span></div>
           <div class="bigValue" id="contribBig">—</div>
           <div class="subValue">手取り − お小遣い</div>
 
@@ -334,8 +391,37 @@
     </div>
   </div>
 
+  <!-- Mobile bottom sheet -->
+  <div class="sheetOverlay" id="sheetOverlay"></div>
+  <div class="sheet" id="sheet">
+    <div class="sheetHeader">
+      <p class="sheetTitle" id="sheetTitle">説明</p>
+      <button class="sheetClose" id="sheetClose">閉じる</button>
+    </div>
+    <div class="sheetBody" id="sheetBody"></div>
+  </div>
+
 <script>
   const WIFE_FIXED_CONTRIB = 140000;
+
+  const netEl = document.getElementById("net");
+  const yearEl = document.getElementById("year");
+  const monthEl = document.getElementById("month");
+  const rangePill = document.getElementById("rangePill");
+
+  const allowanceBig = document.getElementById("allowanceBig");
+  const allowanceSub = document.getElementById("allowanceSub");
+  const contribBig = document.getElementById("contribBig");
+  const totalContrib = document.getElementById("totalContrib");
+  const out = document.getElementById("out");
+  const copyBtn = document.getElementById("copyBtn");
+
+  // sheet
+  const overlay = document.getElementById("sheetOverlay");
+  const sheet = document.getElementById("sheet");
+  const sheetTitle = document.getElementById("sheetTitle");
+  const sheetBody = document.getElementById("sheetBody");
+  const sheetClose = document.getElementById("sheetClose");
 
   function toNumber(s){
     if(!s) return null;
@@ -352,7 +438,6 @@
 
   function calcHusbandAllowanceByRange(net){
     const r = roundToThousand(net);
-
     if(r <= 335000) return { allowance: 55000, range: "～335,000（四捨五入後 " + fmtComma(r) + "）" };
     if(r <= 375000) return { allowance: 60000, range: "335,001～375,000（四捨五入後 " + fmtComma(r) + "）" };
     if(r <= 400000) return { allowance: 65000, range: "375,001～400,000（四捨五入後 " + fmtComma(r) + "）" };
@@ -374,7 +459,6 @@
 
   function initFromQuery(){
     const p = new URLSearchParams(location.search);
-
     const now = new Date();
     const defaultYear = now.getFullYear();
     const defaultMonth = now.getMonth() + 1;
@@ -400,7 +484,7 @@
 
   function buildOutput(year, month, net, allowance, contrib, total){
     const ym = (year && month) ? `${year}年 ${month}月` : "";
-    return `【お小遣い & 家計拠出】${ym ? `\\n▶ 対象：${ym}` : ""}
+    return `【お小遣い & 家計拠出】${ym ? `\n▶ 対象：${ym}` : ""}
 
 ■ 妻：家計拠出（固定） ${yen(WIFE_FIXED_CONTRIB)}
 
@@ -434,56 +518,50 @@
 
     allowanceBig.textContent = fmtComma(allowance) + "円";
     allowanceSub.textContent = "（" + range + "）";
-
     contribBig.textContent = fmtComma(contrib) + "円";
     totalContrib.textContent = yen(total);
-
-    rangePill.textContent = "レンジ：" + (range.replace("（", "（").replace("）", "）"));
+    rangePill.textContent = "レンジ：" + range.replace(/（.*?$/, "").trim() + "（四捨五入後）";
 
     out.value = buildOutput(year, month, net, allowance, contrib, total);
 
-    // prettify
     netEl.value = fmtComma(net);
-
     setQueryFromState();
   }
 
-  // tooltip tap support
-  function setupTip(el){
-    el.addEventListener("click", (e) => {
-      e.stopPropagation();
-      const open = el.getAttribute("data-open") === "true";
-      document.querySelectorAll(".tip[data-open='true']").forEach(t => t.setAttribute("data-open","false"));
-      el.setAttribute("data-open", open ? "false" : "true");
-    });
+  // ----- Mobile sheet open/close -----
+  function isCoarsePointer(){
+    return window.matchMedia && window.matchMedia("(pointer: coarse)").matches;
   }
-  document.addEventListener("click", () => {
-    document.querySelectorAll(".tip[data-open='true']").forEach(t => t.setAttribute("data-open","false"));
+  function openSheet(title, bodyHtml){
+    document.body.classList.add("sheetOpen");
+    sheetTitle.textContent = title || "説明";
+    sheetBody.innerHTML = bodyHtml || "";
+  }
+  function closeSheet(){
+    document.body.classList.remove("sheetOpen");
+  }
+  overlay.addEventListener("click", closeSheet);
+  sheetClose.addEventListener("click", closeSheet);
+  document.addEventListener("keydown", (e) => {
+    if(e.key === "Escape") closeSheet();
   });
 
-  // DOM
-  const netEl = document.getElementById("net");
-  const yearEl = document.getElementById("year");
-  const monthEl = document.getElementById("month");
-
-  const rangePill = document.getElementById("rangePill");
-  const allowanceBig = document.getElementById("allowanceBig");
-  const allowanceSub = document.getElementById("allowanceSub");
-  const contribBig = document.getElementById("contribBig");
-  const totalContrib = document.getElementById("totalContrib");
-  const out = document.getElementById("out");
-  const copyBtn = document.getElementById("copyBtn");
-
-  setupTip(document.getElementById("tipNet"));
-  setupTip(document.getElementById("tipWife"));
-  setupTip(document.getElementById("tipRange"));
+  // i button: on mobile => sheet, on desktop => rely on hover tooltip
+  document.querySelectorAll(".iBtn").forEach(btn => {
+    btn.addEventListener("click", (e) => {
+      e.preventDefault();
+      e.stopPropagation();
+      if(isCoarsePointer()){
+        openSheet(btn.dataset.sheetTitle, btn.dataset.sheetBody);
+      }
+    });
+  });
 
   initFromQuery();
   recalc();
 
   netEl.addEventListener("input", recalc);
   netEl.addEventListener("blur", recalc);
-
   monthEl.addEventListener("change", recalc);
 
   yearEl.addEventListener("blur", () => {
