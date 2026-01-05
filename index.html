@@ -2,269 +2,428 @@
 <html lang="ja">
 <head>
   <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>手取り → 家計振込・お小遣い</title>
-
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>家計拠出 & お小遣い（夫レンジ制）</title>
   <style>
-    *, *::before, *::after { box-sizing: border-box; }
-
     :root{
-      --bg:#f6f5f2;
+      --bg:#f6f4ef;
       --card:#ffffff;
-      --text:#2e2e2e;
-      --muted:#7a7a7a;
-      --line:#e4e2dd;
-      --soft:#f1f0eb;
-      --accent:#7fa99b;
-      --accent-soft:#e7f0ed;
-      --radius:18px;
-      --radius-s:14px;
-      --shadow:0 6px 16px rgba(0,0,0,.06);
+      --text:#1f2a25;
+      --muted:#607169;
+      --line:#e6e0d6;
+      --soft:#f3efe7;
+      --accent:#2f6f5f;
+      --accentSoft:#e1f0eb;
+      --warn:#b45309;
+      --warnSoft:#fff7ed;
+      --radius:16px;
+      --radiusS:12px;
+      --shadow: 0 10px 30px rgba(23, 32, 28, .08);
+      --mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+      --sans: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans JP", "Hiragino Kaku Gothic ProN", "Yu Gothic", sans-serif;
     }
-
+    *{ box-sizing:border-box; }
     body{
       margin:0;
-      font-family:-apple-system,BlinkMacSystemFont,"Hiragino Sans","Noto Sans JP",sans-serif;
-      background:var(--bg);
+      font-family: var(--sans);
+      background: radial-gradient(1200px 600px at 20% -10%, #fff 0%, rgba(255,255,255,0) 60%),
+                  radial-gradient(1200px 600px at 90% 10%, rgba(225,240,235,.85) 0%, rgba(255,255,255,0) 55%),
+                  var(--bg);
       color:var(--text);
     }
-
-    .wrap{max-width:560px;margin:0 auto;padding:20px 14px 32px;}
-
-    .title{font-size:20px;font-weight:700;margin:0 0 4px;}
-    .subtitle{font-size:12px;color:var(--muted);margin:0 0 14px;}
-
+    .wrap{
+      max-width: 760px;
+      margin: 0 auto;
+      padding: 18px 14px 28px;
+    }
+    header{
+      display:flex;
+      align-items:flex-end;
+      justify-content:space-between;
+      gap:10px;
+      margin: 6px 0 14px;
+    }
+    h1{
+      font-size: 18px;
+      margin: 0;
+      letter-spacing:.02em;
+    }
+    .sub{
+      margin:0;
+      font-size: 12px;
+      color: var(--muted);
+    }
     .card{
-      background:var(--card);
+      background: var(--card);
       border:1px solid var(--line);
-      border-radius:var(--radius);
-      box-shadow:var(--shadow);
-      padding:14px;
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      padding: 14px;
     }
-
-    .seg{
-      display:flex;gap:8px;padding:6px;
-      border-radius:var(--radius-s);
-      background:var(--soft);
-      border:1px solid var(--line);
-      margin-bottom:14px;
-    }
-    .seg label{flex:1;text-align:center;cursor:pointer;}
-    .seg input{display:none;}
-    .seg span{
-      display:block;padding:10px 0;border-radius:12px;
-      font-size:14px;font-weight:600;color:var(--muted);
-    }
-    .seg input:checked + span{
-      background:#fff;color:var(--text);border:1px solid var(--line);
-    }
-
-    .form{display:flex;flex-direction:column;gap:10px;}
     .row{
-      display:grid;grid-template-columns:150px 1fr;
-      gap:10px;align-items:center;
+      display:grid;
+      grid-template-columns: 160px 1fr;
+      gap:10px;
+      align-items:center;
+      margin: 10px 0;
     }
-    .row>*{min-width:0;}
-
-    label{font-size:12px;font-weight:600;color:var(--muted);}
-
-    input[type="text"]{
-      width:100%;padding:12px;font-size:16px;
-      border-radius:12px;border:1px solid var(--line);
-      background:#fff;
+    label{
+      font-size: 12px;
+      color: var(--muted);
+      font-weight: 650;
+      white-space: nowrap;
     }
-    input[readonly]{background:var(--soft);color:var(--muted);}
-
-    .toggle{
-      display:flex;align-items:center;gap:8px;
-      padding:10px 12px;border-radius:12px;
-      background:var(--soft);border:1px solid var(--line);
-      font-size:13px;color:var(--muted);
+    input, select{
+      width: 100%;
+      padding: 12px 12px;
+      border-radius: 12px;
+      border: 1px solid var(--line);
+      background: #fff;
+      font-size: 16px;
+      outline: none;
+      min-width:0;
     }
-    .toggle input{width:18px;height:18px;accent-color:var(--accent);}
-
-    .result{
-      margin-top:14px;padding:12px;
-      border-radius:var(--radius-s);
-      border:1px solid var(--line);
-      background:#fafafa;
+    input:focus, select:focus{
+      border-color: rgba(47,111,95,.45);
+      box-shadow: 0 0 0 4px rgba(47,111,95,.12);
+    }
+    .readonly{
+      background: var(--soft);
+      color: var(--muted);
+    }
+    .grid2{
+      display:grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+    }
+    @media (max-width: 560px){
+      .row{ grid-template-columns: 1fr; gap:6px; }
+      .grid2{ grid-template-columns: 1fr; }
+      header{ flex-direction:column; align-items:flex-start; }
+    }
+    .pill{
+      display:inline-flex;
+      align-items:center;
+      gap:8px;
+      padding: 8px 10px;
+      border-radius: 999px;
+      background: var(--accentSoft);
+      border: 1px solid rgba(47,111,95,.18);
+      color: #244b41;
+      font-size: 12px;
+      font-weight: 650;
+    }
+    .results{
+      margin-top: 12px;
+      padding: 12px;
+      border-radius: var(--radiusS);
+      border: 1px solid var(--line);
+      background: #fbfaf7;
     }
     .kv{
-      display:flex;justify-content:space-between;
-      gap:10px;padding:8px 0;border-bottom:1px dashed var(--line);
+      display:flex;
+      justify-content:space-between;
+      gap:10px;
+      padding: 8px 0;
+      border-bottom: 1px dashed var(--line);
+      font-variant-numeric: tabular-nums;
     }
-    .kv:last-child{border-bottom:none;}
-    .k{font-size:13px;color:var(--muted);}
-    .v{font-weight:700;text-align:right;font-variant-numeric:tabular-nums;}
-    .v.main{font-size:20px;}
-    .sub{color:var(--muted);font-weight:600;}
-
+    .kv:last-child{ border-bottom:none; }
+    .k{ color: var(--muted); font-size: 13px; white-space:nowrap; }
+    .v{ font-weight: 750; text-align:right; }
+    .big .v{ font-size: 18px; }
+    .hint{
+      margin-top: 10px;
+      display:flex;
+      gap:10px;
+      align-items:flex-start;
+      padding: 10px 12px;
+      border-radius: 14px;
+      border: 1px solid rgba(180,83,9,.2);
+      background: var(--warnSoft);
+      color: #7c3a07;
+      font-size: 12px;
+      line-height: 1.5;
+    }
+    .btnRow{
+      display:flex;
+      gap:10px;
+      align-items:center;
+      margin-top: 12px;
+      flex-wrap: wrap;
+    }
     button{
-      margin-top:14px;padding:12px 14px;
-      font-size:14px;border-radius:12px;
       border:1px solid var(--line);
-      background:var(--accent-soft);
-      color:#355f55;font-weight:600;cursor:pointer;
+      background: var(--accentSoft);
+      color:#244b41;
+      border-radius: 12px;
+      padding: 12px 14px;
+      font-size: 14px;
+      font-weight: 750;
+      cursor:pointer;
     }
-
+    button:active{ transform: translateY(1px); }
     textarea{
-      width:100%;margin-top:12px;min-height:160px;
-      padding:12px;border-radius:14px;
+      width:100%;
+      margin-top: 10px;
+      min-height: 170px;
+      border-radius: 14px;
       border:1px solid var(--line);
-      font-size:13px;line-height:1.5;
+      padding: 12px;
+      font-size: 13px;
+      line-height: 1.6;
+      resize: vertical;
+      font-family: var(--sans);
+      background:#fff;
     }
-
-    .hint{margin-top:10px;font-size:12px;color:var(--muted);}
-
-    @media(max-width:420px){
-      .row{grid-template-columns:120px 1fr;}
-      .v.main{font-size:18px;}
+    .mono{
+      font-family: var(--mono);
+      font-size: 12px;
+      color: var(--muted);
+      word-break: break-all;
     }
   </style>
 </head>
 
 <body>
-<div class="wrap">
-  <h1 class="title">手取り → 家計振込・お小遣い</h1>
-  <p class="subtitle">最低お小遣い5万円を確保しながら家計振込額を計算</p>
-
-  <div class="card">
-    <div class="seg">
-      <label><input type="radio" name="who" id="whoShogo" checked><span>しょうご</span></label>
-      <label><input type="radio" name="who" id="whoKana"><span>かな</span></label>
-    </div>
-
-    <div class="form">
-      <div class="row"><label>当月手取り</label><input id="net" type="text" inputmode="numeric"></div>
-      <div class="row"><label>平均手取り(2025年)</label><input id="avg" type="text" readonly></div>
-      <div class="row"><label>最低お小遣い</label><input id="allow" type="text" readonly></div>
-      <div class="row"><label>超過分 家計配分率</label><input id="rate" type="text" readonly></div>
-
-      <div class="toggle">
-        <input id="roundOn" type="checkbox" checked>
-        <label for="roundOn">家計振込額を1,000円単位で四捨五入</label>
+  <div class="wrap">
+    <header>
+      <div>
+        <h1>家計拠出 & お小遣い（夫レンジ制）</h1>
+        <p class="sub">夫の手取りだけ入力すればOK（妻は固定拠出：14万円）</p>
       </div>
-    </div>
+      <div class="pill" id="rangePill">レンジ判定：—</div>
+    </header>
 
-    <div class="result">
-      <div class="kv"><div class="k">家計に振り込む</div><div class="v main" id="contrib">—</div></div>
-      <div class="kv"><div class="k">自分に残す</div><div class="v main" id="pocket">—</div></div>
-      <div class="kv"><div class="k">└ 最低お小遣い</div><div class="v sub" id="allowShown">—</div></div>
-      <div class="kv"><div class="k">└ 余剰</div><div class="v sub" id="surplus">—</div></div>
-      <div class="kv"><div class="k">参考：平均との差</div><div class="v" id="diff">—</div></div>
-      <div class="kv"><div class="k">参考：超過分の家計追加</div><div class="v" id="extra">—</div></div>
-    </div>
+    <div class="card">
+      <div class="grid2">
+        <div>
+          <label>年</label>
+          <input id="year" inputmode="numeric" />
+        </div>
+        <div>
+          <label>月</label>
+          <select id="month">
+            <option value="1">1月</option><option value="2">2月</option><option value="3">3月</option><option value="4">4月</option>
+            <option value="5">5月</option><option value="6">6月</option><option value="7">7月</option><option value="8">8月</option>
+            <option value="9">9月</option><option value="10">10月</option><option value="11">11月</option><option value="12">12月</option>
+          </select>
+        </div>
+      </div>
 
-    <button id="copyBtn">結果をコピー</button>
-    <textarea id="out" readonly></textarea>
+      <div class="row">
+        <label for="net">夫の当月手取り（円）</label>
+        <input id="net" inputmode="numeric" placeholder="" />
+      </div>
 
-    <div class="hint">
-      URLに <code>?who=shogo</code> / <code>?who=kana</code> を付けると初期選択が切り替わります。
+      <div class="row">
+        <label>妻の家計拠出（固定）</label>
+        <input class="readonly" id="wifeFixed" readonly value="140,000" />
+      </div>
+
+      <div class="hint">
+        <div>📌</div>
+        <div>
+          夫のお小遣いは「手取りを千円単位で四捨五入」してレンジ判定します。<br/>
+          ～349,999→5万 / 350,000～379,999→5.5万 / 380,000～409,999→6万 / 410,000～→6.5万
+        </div>
+      </div>
+
+      <div class="results" id="results">
+        <div class="kv big">
+          <div class="k">夫のお小遣い</div>
+          <div class="v" id="allowance">—</div>
+        </div>
+        <div class="kv">
+          <div class="k">夫の家計拠出（= 手取り − お小遣い）</div>
+          <div class="v" id="contrib">—</div>
+        </div>
+        <div class="kv">
+          <div class="k">夫婦の家計拠出 合計（夫 + 妻）</div>
+          <div class="v" id="contribTotal">—</div>
+        </div>
+      </div>
+
+      <div class="btnRow">
+        <button id="copyBtn">LINE用フォーマットをコピー</button>
+        <div class="mono" id="urlPreview"></div>
+      </div>
+
+      <textarea id="out" readonly></textarea>
     </div>
   </div>
-</div>
 
 <script>
-  const CONFIG={
-    shogoAvg:375419,
-    kanaAvg:194420,
-    allowance:50000,
-    rate:0.5
-  };
-
-  const yen=n=>n.toLocaleString("ja-JP")+"円";
-  const round1000=v=>Math.round(v/1000)*1000;
-
-  function parseMoney(str){
-    if(!str)return null;
-    let s=String(str).trim();
-    s=s.replace(/[０-９]/g,c=>String.fromCharCode(c.charCodeAt(0)-0xFEE0));
-    s=s.replace(/[，,￥¥円\s]/g,"");
-    const n=Number(s);
-    return Number.isFinite(n)?n:NaN;
+  // ====== Helpers ======
+  function toNumber(s){
+    if(!s) return null;
+    let t = String(s).trim();
+    // 全角→半角
+    t = t.replace(/[０-９]/g, c => String.fromCharCode(c.charCodeAt(0) - 0xFEE0));
+    // カンマ・円・空白除去
+    t = t.replace(/[，,￥¥円\\s]/g, "");
+    if(!t) return null;
+    const n = Number(t);
+    return Number.isFinite(n) ? n : null;
   }
-  function formatMoney(n){
-    return Number.isFinite(n)?n.toLocaleString("ja-JP"):"";
+  function yen(n){
+    return n.toLocaleString("ja-JP") + "円";
   }
-
-  const whoShogo=document.getElementById("whoShogo");
-  const whoKana=document.getElementById("whoKana");
-  const netEl=document.getElementById("net");
-  const avgEl=document.getElementById("avg");
-  const allowEl=document.getElementById("allow");
-  const rateEl=document.getElementById("rate");
-  const roundOnEl=document.getElementById("roundOn");
-
-  const contribEl=document.getElementById("contrib");
-  const pocketEl=document.getElementById("pocket");
-  const allowShownEl=document.getElementById("allowShown");
-  const surplusEl=document.getElementById("surplus");
-  const diffEl=document.getElementById("diff");
-  const extraEl=document.getElementById("extra");
-  const outEl=document.getElementById("out");
-
-  function currentAvg(){
-    return whoKana.checked?CONFIG.kanaAvg:CONFIG.shogoAvg;
+  function fmtComma(n){
+    return n.toLocaleString("ja-JP");
+  }
+  function roundToThousand(n){
+    return Math.round(n / 1000) * 1000;
   }
 
-  function applyWhoFromQuery(){
-    const p=new URLSearchParams(location.search);
-    const who=p.get("who");
-    if(who==="kana") whoKana.checked=true;
-    if(who==="shogo") whoShogo.checked=true;
+  function calcAllowanceByRange(net){
+    const r = roundToThousand(net);
+
+    if(r < 350000) return { allowance: 50000, range: "～349,999（四捨五入後 " + fmtComma(r) + "）" };
+    if(r < 380000) return { allowance: 55000, range: "350,000～379,999（四捨五入後 " + fmtComma(r) + "）" };
+    if(r < 410000) return { allowance: 60000, range: "380,000～409,999（四捨五入後 " + fmtComma(r) + "）" };
+    return { allowance: 65000, range: "410,000～（四捨五入後 " + fmtComma(r) + "）" };
   }
 
-  function syncFixed(){
-    avgEl.value=yen(currentAvg());
-    allowEl.value=yen(CONFIG.allowance);
-    rateEl.value=(CONFIG.rate*100)+"%";
+  function setQueryFromState(){
+    const url = new URL(location.href);
+    const net = toNumber(netEl.value);
+    const year = toNumber(yearEl.value);
+    const month = toNumber(monthEl.value);
+
+    if(net == null) url.searchParams.delete("net"); else url.searchParams.set("net", String(Math.trunc(net)));
+    if(year == null) url.searchParams.delete("year"); else url.searchParams.set("year", String(Math.trunc(year)));
+    if(month == null) url.searchParams.delete("month"); else url.searchParams.set("month", String(Math.trunc(month)));
+
+    history.replaceState(null, "", url);
+    urlPreview.textContent = url.pathname + url.search;
   }
 
-  function compute(){
-    syncFixed();
-    const net=parseMoney(netEl.value);
-    if(net===null||Number.isNaN(net))return;
+  function initFromQuery(){
+    const p = new URLSearchParams(location.search);
 
-    let contrib=(currentAvg()-CONFIG.allowance)
-      +Math.max(0,net-currentAvg())*CONFIG.rate;
+    const now = new Date();
+    const defaultYear = now.getFullYear();
+    const defaultMonth = now.getMonth() + 1;
 
-    contrib=Math.min(contrib,net-CONFIG.allowance);
-    if(roundOnEl.checked)contrib=round1000(contrib);
-    contrib=Math.min(contrib,net-CONFIG.allowance);
+    const qNet = p.get("net");
+    const qYear = p.get("year");
+    const qMonth = p.get("month");
 
-    const pocket=net-contrib;
+    if(qYear){
+      const y = toNumber(qYear);
+      if(y != null) yearEl.value = String(Math.trunc(y));
+      else yearEl.value = String(defaultYear);
+    }else{
+      yearEl.value = String(defaultYear);
+    }
 
-    contribEl.textContent=yen(contrib);
-    pocketEl.textContent=yen(pocket);
-    allowShownEl.textContent=yen(CONFIG.allowance);
-    surplusEl.textContent=yen(pocket-CONFIG.allowance);
-    diffEl.textContent=yen(net-currentAvg());
-    extraEl.textContent=yen(Math.max(0,net-currentAvg())*CONFIG.rate);
+    if(qMonth){
+      const m = toNumber(qMonth);
+      if(m != null && m >= 1 && m <= 12) monthEl.value = String(Math.trunc(m));
+      else monthEl.value = String(defaultMonth);
+    }else{
+      monthEl.value = String(defaultMonth);
+    }
 
-    const who=whoKana.checked?"かな":"しょうご";
-    outEl.value=
-`【当月 家計振込・お小遣い（${who}）】
-・当月手取り：${yen(net)}
-・家計口座に振り込む：${yen(contrib)}
-・自分に残す：${yen(pocket)}
-　└ 最低お小遣い：${yen(CONFIG.allowance)}
-　└ 余剰：${yen(pocket-CONFIG.allowance)}`;
+    if(qNet){
+      const n = toNumber(qNet);
+      if(n != null) netEl.value = fmtComma(n);
+    }
+
+    // 初期URL表示
+    setQueryFromState();
   }
 
-  netEl.addEventListener("input",compute);
-  netEl.addEventListener("blur",()=>{
-    const v=parseMoney(netEl.value);
-    if(Number.isFinite(v))netEl.value=formatMoney(v);
+  function buildOutput(year, month, net, allowance, contrib, totalContrib){
+    const ym = (year && month) ? (year + "年 " + month + "月") : "";
+
+    return `【お小遣い & 家計拠出（夫レンジ制）】${ym ? "\\n\\n" + "▶ 対象： " + ym : ""}
+
+■ 妻：家計拠出（固定） 140,000円
+
+■ 夫：当月手取り ${yen(net)}
+・お小遣い ${yen(allowance)}
+・家計拠出 ${yen(contrib)}
+
+■ 夫婦：家計拠出 合計 ${yen(totalContrib)}
+`;
+  }
+
+  function recalc(){
+    const net = toNumber(netEl.value);
+    const year = toNumber(yearEl.value);
+    const month = toNumber(monthEl.value);
+
+    if(net == null || net < 0){
+      allowanceEl.textContent = "—";
+      contribEl.textContent = "—";
+      contribTotalEl.textContent = "—";
+      rangePill.textContent = "レンジ判定：—";
+      outEl.value = "";
+      setQueryFromState();
+      return;
+    }
+
+    const { allowance, range } = calcAllowanceByRange(net);
+    const contrib = Math.max(0, net - allowance);
+
+    const wifeFixed = 140000;
+    const totalContrib = contrib + wifeFixed;
+
+    allowanceEl.textContent = yen(allowance);
+    contribEl.textContent = yen(contrib);
+    contribTotalEl.textContent = yen(totalContrib);
+    rangePill.textContent = "レンジ判定：" + range;
+
+    outEl.value = buildOutput(year, month, net, allowance, contrib, totalContrib);
+
+    // 入力をきれいに整形（blur相当）
+    netEl.value = fmtComma(net);
+
+    setQueryFromState();
+  }
+
+  // ====== DOM ======
+  const netEl = document.getElementById("net");
+  const yearEl = document.getElementById("year");
+  const monthEl = document.getElementById("month");
+  const outEl = document.getElementById("out");
+  const allowanceEl = document.getElementById("allowance");
+  const contribEl = document.getElementById("contrib");
+  const contribTotalEl = document.getElementById("contribTotal");
+  const rangePill = document.getElementById("rangePill");
+  const urlPreview = document.getElementById("urlPreview");
+  const copyBtn = document.getElementById("copyBtn");
+
+  // ====== Events ======
+  initFromQuery();
+
+  netEl.addEventListener("input", recalc);
+  netEl.addEventListener("blur", recalc);
+
+  yearEl.addEventListener("input", setQueryFromState);
+  yearEl.addEventListener("blur", () => {
+    const y = toNumber(yearEl.value);
+    if(y != null) yearEl.value = String(Math.trunc(y));
+    setQueryFromState();
   });
-  [whoShogo,whoKana,roundOnEl].forEach(el=>el.addEventListener("change",compute));
 
-  document.getElementById("copyBtn").onclick=async()=>{
-    if(!outEl.value)return;
-    await navigator.clipboard.writeText(outEl.value);
-  };
+  monthEl.addEventListener("change", recalc);
 
-  applyWhoFromQuery();
-  syncFixed();
+  copyBtn.addEventListener("click", async () => {
+    if(!outEl.value) return;
+    try{
+      await navigator.clipboard.writeText(outEl.value);
+      copyBtn.textContent = "コピーしました";
+      setTimeout(() => copyBtn.textContent = "LINE用フォーマットをコピー", 1200);
+    }catch(e){
+      alert("コピーに失敗しました。テキスト欄から手動でコピーしてください。");
+    }
+  });
+
+  // 初回計算
+  recalc();
 </script>
 </body>
 </html>
