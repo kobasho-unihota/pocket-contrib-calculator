@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>家計拠出 & お小遣い（夫レンジ制）</title>
+  <title>家計拠出 & お小遣い（夫レンジ制 / 妻固定）</title>
   <style>
     :root{
       --bg:#f6f4ef;
@@ -32,7 +32,7 @@
       color:var(--text);
     }
     .wrap{
-      max-width: 760px;
+      max-width: 860px;
       margin: 0 auto;
       padding: 18px 14px 28px;
     }
@@ -49,9 +49,10 @@
       letter-spacing:.02em;
     }
     .sub{
-      margin:0;
+      margin:4px 0 0;
       font-size: 12px;
       color: var(--muted);
+      line-height: 1.5;
     }
     .card{
       background: var(--card);
@@ -60,9 +61,14 @@
       box-shadow: var(--shadow);
       padding: 14px;
     }
+    .grid2{
+      display:grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+    }
     .row{
       display:grid;
-      grid-template-columns: 160px 1fr;
+      grid-template-columns: 180px 1fr;
       gap:10px;
       align-items:center;
       margin: 10px 0;
@@ -91,12 +97,7 @@
       background: var(--soft);
       color: var(--muted);
     }
-    .grid2{
-      display:grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 10px;
-    }
-    @media (max-width: 560px){
+    @media (max-width: 640px){
       .row{ grid-template-columns: 1fr; gap:6px; }
       .grid2{ grid-template-columns: 1fr; }
       header{ flex-direction:column; align-items:flex-start; }
@@ -113,12 +114,31 @@
       font-size: 12px;
       font-weight: 650;
     }
-    .results{
-      margin-top: 12px;
+    .split{
+      display:grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+      margin-top: 10px;
+    }
+    @media (max-width: 900px){
+      .split{ grid-template-columns: 1fr; }
+    }
+    .panel{
+      border:1px solid var(--line);
+      border-radius: var(--radius);
+      background:#fbfaf7;
       padding: 12px;
-      border-radius: var(--radiusS);
-      border: 1px solid var(--line);
-      background: #fbfaf7;
+    }
+    .panel h2{
+      margin: 0 0 6px;
+      font-size: 14px;
+      letter-spacing:.02em;
+    }
+    .meta{
+      font-size: 12px;
+      color: var(--muted);
+      margin: 0 0 10px;
+      line-height: 1.5;
     }
     .kv{
       display:flex;
@@ -166,7 +186,7 @@
     textarea{
       width:100%;
       margin-top: 10px;
-      min-height: 170px;
+      min-height: 190px;
       border-radius: 14px;
       border:1px solid var(--line);
       padding: 12px;
@@ -182,6 +202,18 @@
       color: var(--muted);
       word-break: break-all;
     }
+    .badge{
+      display:inline-flex;
+      align-items:center;
+      gap:6px;
+      font-size: 11px;
+      font-weight: 750;
+      color:#244b41;
+      background: var(--accentSoft);
+      border: 1px solid rgba(47,111,95,.18);
+      border-radius: 999px;
+      padding: 5px 8px;
+    }
   </style>
 </head>
 
@@ -189,20 +221,23 @@
   <div class="wrap">
     <header>
       <div>
-        <h1>家計拠出 & お小遣い（夫レンジ制）</h1>
-        <p class="sub">夫の手取りだけ入力すればOK（妻は固定拠出：14万円）</p>
+        <h1>家計拠出 & お小遣い（妻固定 / 夫レンジ）</h1>
+        <p class="sub">
+          妻：家計拠出 14万円固定。夫：手取りを入力するとレンジでお小遣いを決定し、残りを家計へ。<br>
+          <span class="badge">妻平均手取り 207,000円 → 平均お小遣い 67,000円</span>
+        </p>
       </div>
-      <div class="pill" id="rangePill">レンジ判定：—</div>
+      <div class="pill" id="rangePill">夫レンジ判定：—</div>
     </header>
 
     <div class="card">
       <div class="grid2">
         <div>
-          <label>年</label>
+          <label for="year">年</label>
           <input id="year" inputmode="numeric" />
         </div>
         <div>
-          <label>月</label>
+          <label for="month">月</label>
           <select id="month">
             <option value="1">1月</option><option value="2">2月</option><option value="3">3月</option><option value="4">4月</option>
             <option value="5">5月</option><option value="6">6月</option><option value="7">7月</option><option value="8">8月</option>
@@ -217,30 +252,59 @@
       </div>
 
       <div class="row">
-        <label>妻の家計拠出（固定）</label>
+        <label>妻：家計拠出（固定）</label>
         <input class="readonly" id="wifeFixed" readonly value="140,000" />
+      </div>
+
+      <div class="split">
+        <div class="panel">
+          <h2>夫（レンジ制）</h2>
+          <p class="meta">
+            手取りを「千円単位で四捨五入」してレンジ判定。<br>
+            妻の平均お小遣い（67,000円）と“平均で揃う”ようにレンジを設計。
+          </p>
+
+          <div class="kv big">
+            <div class="k">夫のお小遣い</div>
+            <div class="v" id="hAllowance">—</div>
+          </div>
+          <div class="kv">
+            <div class="k">夫の家計拠出（= 手取り − お小遣い）</div>
+            <div class="v" id="hContrib">—</div>
+          </div>
+        </div>
+
+        <div class="panel">
+          <h2>妻（固定拠出）</h2>
+          <p class="meta">
+            家計：14万円固定。<br>
+            平均お小遣い：207,000 − 140,000 = 67,000円
+          </p>
+
+          <div class="kv big">
+            <div class="k">妻のお小遣い（平均）</div>
+            <div class="v" id="wAvgPocket">67,000円</div>
+          </div>
+          <div class="kv">
+            <div class="k">妻の家計拠出</div>
+            <div class="v" id="wContrib">140,000円</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="panel" style="margin-top:12px;">
+        <h2>夫婦合計</h2>
+        <div class="kv big">
+          <div class="k">家計拠出 合計（夫 + 妻）</div>
+          <div class="v" id="totalContrib">—</div>
+        </div>
       </div>
 
       <div class="hint">
         <div>📌</div>
         <div>
-          夫のお小遣いは「手取りを千円単位で四捨五入」してレンジ判定します。<br/>
-          ～349,999→5万 / 350,000～379,999→5.5万 / 380,000～409,999→6万 / 410,000～→6.5万
-        </div>
-      </div>
-
-      <div class="results" id="results">
-        <div class="kv big">
-          <div class="k">夫のお小遣い</div>
-          <div class="v" id="allowance">—</div>
-        </div>
-        <div class="kv">
-          <div class="k">夫の家計拠出（= 手取り − お小遣い）</div>
-          <div class="v" id="contrib">—</div>
-        </div>
-        <div class="kv">
-          <div class="k">夫婦の家計拠出 合計（夫 + 妻）</div>
-          <div class="v" id="contribTotal">—</div>
+          夫レンジ（四捨五入後の手取りで判定）：<br>
+          ～335,000 → 60,000 / 335,001～375,000 → 65,000 / 375,001～400,000 → 70,000 / 400,001～ → 75,000
         </div>
       </div>
 
@@ -254,13 +318,16 @@
   </div>
 
 <script>
+  // ====== Constants ======
+  const WIFE_FIXED_CONTRIB = 140000;
+  const WIFE_AVG_NET = 207000;
+  const WIFE_AVG_POCKET = WIFE_AVG_NET - WIFE_FIXED_CONTRIB; // 67000
+
   // ====== Helpers ======
   function toNumber(s){
     if(!s) return null;
     let t = String(s).trim();
-    // 全角→半角
     t = t.replace(/[０-９]/g, c => String.fromCharCode(c.charCodeAt(0) - 0xFEE0));
-    // カンマ・円・空白除去
     t = t.replace(/[，,￥¥円\\s]/g, "");
     if(!t) return null;
     const n = Number(t);
@@ -276,13 +343,14 @@
     return Math.round(n / 1000) * 1000;
   }
 
-  function calcAllowanceByRange(net){
+  // ====== Husband allowance (new ranges aligned to wife's avg pocket ~ 67,000) ======
+  function calcHusbandAllowanceByRange(net){
     const r = roundToThousand(net);
 
-    if(r < 350000) return { allowance: 50000, range: "～349,999（四捨五入後 " + fmtComma(r) + "）" };
-    if(r < 380000) return { allowance: 55000, range: "350,000～379,999（四捨五入後 " + fmtComma(r) + "）" };
-    if(r < 410000) return { allowance: 60000, range: "380,000～409,999（四捨五入後 " + fmtComma(r) + "）" };
-    return { allowance: 65000, range: "410,000～（四捨五入後 " + fmtComma(r) + "）" };
+    if(r <= 335000) return { allowance: 60000, range: "～335,000（四捨五入後 " + fmtComma(r) + "）" };
+    if(r <= 375000) return { allowance: 65000, range: "335,001～375,000（四捨五入後 " + fmtComma(r) + "）" };
+    if(r <= 400000) return { allowance: 70000, range: "375,001～400,000（四捨五入後 " + fmtComma(r) + "）" };
+    return { allowance: 75000, range: "400,001～（四捨五入後 " + fmtComma(r) + "）" };
   }
 
   function setQueryFromState(){
@@ -310,41 +378,31 @@
     const qYear = p.get("year");
     const qMonth = p.get("month");
 
-    if(qYear){
-      const y = toNumber(qYear);
-      if(y != null) yearEl.value = String(Math.trunc(y));
-      else yearEl.value = String(defaultYear);
-    }else{
-      yearEl.value = String(defaultYear);
-    }
+    const y = qYear ? toNumber(qYear) : defaultYear;
+    yearEl.value = (y != null) ? String(Math.trunc(y)) : String(defaultYear);
 
-    if(qMonth){
-      const m = toNumber(qMonth);
-      if(m != null && m >= 1 && m <= 12) monthEl.value = String(Math.trunc(m));
-      else monthEl.value = String(defaultMonth);
-    }else{
-      monthEl.value = String(defaultMonth);
-    }
+    const m = qMonth ? toNumber(qMonth) : defaultMonth;
+    if(m != null && m >= 1 && m <= 12) monthEl.value = String(Math.trunc(m));
+    else monthEl.value = String(defaultMonth);
 
     if(qNet){
       const n = toNumber(qNet);
       if(n != null) netEl.value = fmtComma(n);
     }
 
-    // 初期URL表示
     setQueryFromState();
   }
 
-  function buildOutput(year, month, net, allowance, contrib, totalContrib){
+  function buildOutput(year, month, net, hAllowance, hContrib, totalContrib){
     const ym = (year && month) ? (year + "年 " + month + "月") : "";
+    return `【お小遣い & 家計拠出】${ym ? "\\n\\n" + "▶ 対象：" + " " + ym : ""}
 
-    return `【お小遣い & 家計拠出（夫レンジ制）】${ym ? "\\n\\n" + "▶ 対象： " + ym : ""}
-
-■ 妻：家計拠出（固定） 140,000円
+■ 妻：家計拠出（固定） ${yen(WIFE_FIXED_CONTRIB)}
+（直近半年 平均手取り ${yen(WIFE_AVG_NET)} → 平均お小遣い ${yen(WIFE_AVG_POCKET)}）
 
 ■ 夫：当月手取り ${yen(net)}
-・お小遣い ${yen(allowance)}
-・家計拠出 ${yen(contrib)}
+・お小遣い ${yen(hAllowance)}
+・家計拠出 ${yen(hContrib)}
 
 ■ 夫婦：家計拠出 合計 ${yen(totalContrib)}
 `;
@@ -356,29 +414,31 @@
     const month = toNumber(monthEl.value);
 
     if(net == null || net < 0){
-      allowanceEl.textContent = "—";
-      contribEl.textContent = "—";
-      contribTotalEl.textContent = "—";
-      rangePill.textContent = "レンジ判定：—";
+      hAllowanceEl.textContent = "—";
+      hContribEl.textContent = "—";
+      totalContribEl.textContent = "—";
+      rangePill.textContent = "夫レンジ判定：—";
       outEl.value = "";
       setQueryFromState();
       return;
     }
 
-    const { allowance, range } = calcAllowanceByRange(net);
-    const contrib = Math.max(0, net - allowance);
+    const { allowance, range } = calcHusbandAllowanceByRange(net);
 
-    const wifeFixed = 140000;
-    const totalContrib = contrib + wifeFixed;
+    // 夫：家計拠出 = 手取り - お小遣い
+    const hContrib = Math.max(0, net - allowance);
 
-    allowanceEl.textContent = yen(allowance);
-    contribEl.textContent = yen(contrib);
-    contribTotalEl.textContent = yen(totalContrib);
-    rangePill.textContent = "レンジ判定：" + range;
+    // 夫婦合計の家計拠出
+    const totalContrib = hContrib + WIFE_FIXED_CONTRIB;
 
-    outEl.value = buildOutput(year, month, net, allowance, contrib, totalContrib);
+    hAllowanceEl.textContent = yen(allowance);
+    hContribEl.textContent = yen(hContrib);
+    totalContribEl.textContent = yen(totalContrib);
+    rangePill.textContent = "夫レンジ判定：" + range;
 
-    // 入力をきれいに整形（blur相当）
+    outEl.value = buildOutput(year, month, net, allowance, hContrib, totalContrib);
+
+    // 入力整形
     netEl.value = fmtComma(net);
 
     setQueryFromState();
@@ -389,9 +449,9 @@
   const yearEl = document.getElementById("year");
   const monthEl = document.getElementById("month");
   const outEl = document.getElementById("out");
-  const allowanceEl = document.getElementById("allowance");
-  const contribEl = document.getElementById("contrib");
-  const contribTotalEl = document.getElementById("contribTotal");
+  const hAllowanceEl = document.getElementById("hAllowance");
+  const hContribEl = document.getElementById("hContrib");
+  const totalContribEl = document.getElementById("totalContrib");
   const rangePill = document.getElementById("rangePill");
   const urlPreview = document.getElementById("urlPreview");
   const copyBtn = document.getElementById("copyBtn");
