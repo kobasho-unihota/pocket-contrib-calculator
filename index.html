@@ -12,36 +12,50 @@
       --muted:#607169;
       --line:#e6e0d6;
       --soft:#f3efe7;
+
       --accent:#2f6f5f;
+      --accent2:#1f5a4c;
       --accentSoft:#e1f0eb;
+
       --warn:#b45309;
       --warnSoft:#fff7ed;
-      --radius:16px;
-      --radiusS:12px;
-      --shadow: 0 10px 30px rgba(23, 32, 28, .08);
+
+      --radius:18px;
+      --radiusS:14px;
+      --shadow: 0 14px 40px rgba(23, 32, 28, .08);
+
       --mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
       --sans: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans JP", "Hiragino Kaku Gothic ProN", "Yu Gothic", sans-serif;
     }
+
     *{ box-sizing:border-box; }
     body{
       margin:0;
       font-family: var(--sans);
-      background: radial-gradient(1200px 600px at 20% -10%, #fff 0%, rgba(255,255,255,0) 60%),
-                  radial-gradient(1200px 600px at 90% 10%, rgba(225,240,235,.85) 0%, rgba(255,255,255,0) 55%),
-                  var(--bg);
       color:var(--text);
+      background:
+        radial-gradient(1200px 700px at 12% -10%, #fff 0%, rgba(255,255,255,0) 60%),
+        radial-gradient(1100px 600px at 92% 12%, rgba(225,240,235,.85) 0%, rgba(255,255,255,0) 55%),
+        var(--bg);
     }
+
     .wrap{
-      max-width: 860px;
+      max-width: 880px;
       margin: 0 auto;
-      padding: 18px 14px 28px;
+      padding: 18px 14px 34px;
     }
+
     header{
       display:flex;
       align-items:flex-end;
       justify-content:space-between;
-      gap:10px;
+      gap:12px;
       margin: 6px 0 14px;
+    }
+    .titleBlock{
+      display:flex;
+      flex-direction:column;
+      gap:6px;
     }
     h1{
       font-size: 18px;
@@ -49,11 +63,26 @@
       letter-spacing:.02em;
     }
     .sub{
-      margin:4px 0 0;
+      margin:0;
       font-size: 12px;
       color: var(--muted);
-      line-height: 1.5;
+      line-height: 1.55;
     }
+
+    .pill{
+      display:inline-flex;
+      align-items:center;
+      gap:8px;
+      padding: 9px 12px;
+      border-radius: 999px;
+      background: var(--accentSoft);
+      border: 1px solid rgba(47,111,95,.18);
+      color: #244b41;
+      font-size: 12px;
+      font-weight: 750;
+      white-space: nowrap;
+    }
+
     .card{
       background: var(--card);
       border:1px solid var(--line);
@@ -61,6 +90,90 @@
       box-shadow: var(--shadow);
       padding: 14px;
     }
+
+    .topGrid{
+      display:grid;
+      grid-template-columns: 1.1fr .9fr;
+      gap: 12px;
+      align-items: stretch;
+      margin-top: 8px;
+    }
+    @media (max-width: 860px){
+      .topGrid{ grid-template-columns: 1fr; }
+      header{ flex-direction:column; align-items:flex-start; }
+    }
+
+    .hero{
+      border:1px solid rgba(47,111,95,.18);
+      background: linear-gradient(180deg, rgba(225,240,235,.7), rgba(255,255,255,.9));
+      border-radius: var(--radius);
+      padding: 14px;
+      position: relative;
+      overflow: hidden;
+    }
+    .hero::after{
+      content:"";
+      position:absolute;
+      inset:auto -60px -70px auto;
+      width: 220px;
+      height: 220px;
+      background: radial-gradient(circle at 30% 30%, rgba(47,111,95,.20), rgba(47,111,95,0) 60%);
+      transform: rotate(15deg);
+      pointer-events:none;
+    }
+
+    .heroLabel{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:10px;
+      margin-bottom: 6px;
+    }
+    .heroLabel h2{
+      margin:0;
+      font-size: 13px;
+      letter-spacing:.02em;
+      color: #244b41;
+    }
+    .heroValue{
+      display:flex;
+      align-items:baseline;
+      justify-content:space-between;
+      gap: 12px;
+      padding-top: 8px;
+    }
+    .heroValue .bigNum{
+      font-size: 34px;
+      font-weight: 900;
+      letter-spacing:.01em;
+      color: var(--accent2);
+      line-height: 1.05;
+      font-variant-numeric: tabular-nums;
+    }
+    .heroValue .unit{
+      font-size: 14px;
+      font-weight: 800;
+      color: var(--accent2);
+      margin-left: 4px;
+    }
+    .heroValue .mini{
+      text-align:right;
+      font-size: 12px;
+      color: var(--muted);
+      line-height: 1.6;
+      font-variant-numeric: tabular-nums;
+    }
+    .heroValue .mini b{
+      color: var(--text);
+    }
+
+    .inputs{
+      border:1px solid var(--line);
+      background: rgba(255,255,255,.82);
+      border-radius: var(--radius);
+      padding: 14px;
+    }
+
     .grid2{
       display:grid;
       grid-template-columns: 1fr 1fr;
@@ -76,7 +189,7 @@
     label{
       font-size: 12px;
       color: var(--muted);
-      font-weight: 650;
+      font-weight: 750;
       white-space: nowrap;
     }
     input, select{
@@ -100,36 +213,25 @@
     @media (max-width: 640px){
       .row{ grid-template-columns: 1fr; gap:6px; }
       .grid2{ grid-template-columns: 1fr; }
-      header{ flex-direction:column; align-items:flex-start; }
     }
-    .pill{
-      display:inline-flex;
-      align-items:center;
-      gap:8px;
-      padding: 8px 10px;
-      border-radius: 999px;
-      background: var(--accentSoft);
-      border: 1px solid rgba(47,111,95,.18);
-      color: #244b41;
-      font-size: 12px;
-      font-weight: 650;
-    }
+
     .split{
       display:grid;
       grid-template-columns: 1fr 1fr;
       gap: 12px;
-      margin-top: 10px;
+      margin-top: 12px;
     }
     @media (max-width: 900px){
       .split{ grid-template-columns: 1fr; }
     }
+
     .panel{
       border:1px solid var(--line);
       border-radius: var(--radius);
       background:#fbfaf7;
       padding: 12px;
     }
-    .panel h2{
+    .panel h3{
       margin: 0 0 6px;
       font-size: 14px;
       letter-spacing:.02em;
@@ -138,8 +240,9 @@
       font-size: 12px;
       color: var(--muted);
       margin: 0 0 10px;
-      line-height: 1.5;
+      line-height: 1.55;
     }
+
     .kv{
       display:flex;
       justify-content:space-between;
@@ -150,10 +253,24 @@
     }
     .kv:last-child{ border-bottom:none; }
     .k{ color: var(--muted); font-size: 13px; white-space:nowrap; }
-    .v{ font-weight: 750; text-align:right; }
+    .v{ font-weight: 850; text-align:right; }
     .big .v{ font-size: 18px; }
+
+    .sumPanel{
+      margin-top: 12px;
+      border:1px solid var(--line);
+      border-radius: var(--radius);
+      background:#fbfaf7;
+      padding: 12px;
+    }
+    .sumPanel h3{
+      margin:0 0 6px;
+      font-size: 14px;
+      letter-spacing:.02em;
+    }
+
     .hint{
-      margin-top: 10px;
+      margin-top: 12px;
       display:flex;
       gap:10px;
       align-items:flex-start;
@@ -163,8 +280,9 @@
       background: var(--warnSoft);
       color: #7c3a07;
       font-size: 12px;
-      line-height: 1.5;
+      line-height: 1.55;
     }
+
     .btnRow{
       display:flex;
       gap:10px;
@@ -173,20 +291,21 @@
       flex-wrap: wrap;
     }
     button{
-      border:1px solid var(--line);
+      border:1px solid rgba(47,111,95,.22);
       background: var(--accentSoft);
       color:#244b41;
       border-radius: 12px;
       padding: 12px 14px;
       font-size: 14px;
-      font-weight: 750;
+      font-weight: 850;
       cursor:pointer;
     }
     button:active{ transform: translateY(1px); }
+
     textarea{
       width:100%;
       margin-top: 10px;
-      min-height: 190px;
+      min-height: 170px;
       border-radius: 14px;
       border:1px solid var(--line);
       padding: 12px;
@@ -196,23 +315,18 @@
       font-family: var(--sans);
       background:#fff;
     }
-    .mono{
-      font-family: var(--mono);
-      font-size: 12px;
-      color: var(--muted);
-      word-break: break-all;
-    }
+
     .badge{
       display:inline-flex;
       align-items:center;
       gap:6px;
       font-size: 11px;
-      font-weight: 750;
+      font-weight: 850;
       color:#244b41;
       background: var(--accentSoft);
       border: 1px solid rgba(47,111,95,.18);
       border-radius: 999px;
-      padding: 5px 8px;
+      padding: 6px 9px;
     }
   </style>
 </head>
@@ -220,78 +334,100 @@
 <body>
   <div class="wrap">
     <header>
-      <div>
+      <div class="titleBlock">
         <h1>家計拠出 & お小遣い（妻固定 / 夫レンジ）</h1>
         <p class="sub">
-          妻：家計拠出 14万円固定。夫：手取りを入力 → レンジでお小遣い決定 → 残りを家計へ。<br>
-          <span class="badge">夫レンジは運用の納得感を優先（55k/60k/65k/70k）</span>
+          妻：家計拠出 14万円固定。夫：手取りを入力 → レンジでお小遣い決定 → 残りを家計へ。
+          <span class="badge">夫レンジ：55k / 60k / 65k / 70k</span>
         </p>
       </div>
       <div class="pill" id="rangePill">夫レンジ判定：—</div>
     </header>
 
     <div class="card">
-      <div class="grid2">
-        <div>
-          <label for="year">年</label>
-          <input id="year" inputmode="numeric" />
+
+      <!-- TOP: Allowance hero + Inputs -->
+      <div class="topGrid">
+        <div class="hero">
+          <div class="heroLabel">
+            <h2>夫のお小遣い（このツールの結果）</h2>
+          </div>
+
+          <div class="heroValue">
+            <div>
+              <span class="bigNum" id="heroAllowance">—</span><span class="unit">円</span>
+            </div>
+            <div class="mini">
+              家計に入れる（夫）<br><b id="heroContrib">—</b>
+            </div>
+          </div>
         </div>
-        <div>
-          <label for="month">月</label>
-          <select id="month">
-            <option value="1">1月</option><option value="2">2月</option><option value="3">3月</option><option value="4">4月</option>
-            <option value="5">5月</option><option value="6">6月</option><option value="7">7月</option><option value="8">8月</option>
-            <option value="9">9月</option><option value="10">10月</option><option value="11">11月</option><option value="12">12月</option>
-          </select>
+
+        <div class="inputs">
+          <div class="grid2">
+            <div>
+              <label for="year">年</label>
+              <input id="year" inputmode="numeric" />
+            </div>
+            <div>
+              <label for="month">月</label>
+              <select id="month">
+                <option value="1">1月</option><option value="2">2月</option><option value="3">3月</option><option value="4">4月</option>
+                <option value="5">5月</option><option value="6">6月</option><option value="7">7月</option><option value="8">8月</option>
+                <option value="9">9月</option><option value="10">10月</option><option value="11">11月</option><option value="12">12月</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="row">
+            <label for="net">夫の当月手取り（円）</label>
+            <input id="net" inputmode="numeric" placeholder="" />
+          </div>
+
+          <div class="row">
+            <label>妻：家計拠出（固定）</label>
+            <input class="readonly" id="wifeFixed" readonly value="140,000" />
+          </div>
         </div>
       </div>
 
-      <div class="row">
-        <label for="net">夫の当月手取り（円）</label>
-        <input id="net" inputmode="numeric" placeholder="" />
-      </div>
-
-      <div class="row">
-        <label>妻：家計拠出（固定）</label>
-        <input class="readonly" id="wifeFixed" readonly value="140,000" />
-      </div>
-
+      <!-- DETAIL PANELS -->
       <div class="split">
         <div class="panel">
-          <h2>夫（レンジ制）</h2>
+          <h3>夫（レンジ制）</h3>
           <p class="meta">
             手取りを「千円単位で四捨五入」してレンジ判定。
           </p>
 
           <div class="kv big">
-            <div class="k">夫のお小遣い</div>
+            <div class="k">お小遣い</div>
             <div class="v" id="hAllowance">—</div>
           </div>
           <div class="kv">
-            <div class="k">夫の家計拠出（= 手取り − お小遣い）</div>
+            <div class="k">家計拠出（夫）</div>
             <div class="v" id="hContrib">—</div>
           </div>
         </div>
 
         <div class="panel">
-          <h2>妻（固定拠出）</h2>
+          <h3>妻（固定拠出）</h3>
           <p class="meta">
             家計：14万円固定（運用が分かりやすい方式）。
           </p>
 
           <div class="kv big">
-            <div class="k">妻の家計拠出</div>
+            <div class="k">家計拠出（妻）</div>
             <div class="v" id="wContrib">140,000円</div>
           </div>
           <div class="kv">
-            <div class="k">妻のお小遣い（当月）</div>
+            <div class="k">お小遣い（妻）</div>
             <div class="v" style="color:var(--muted)">（入力なし / 固定運用）</div>
           </div>
         </div>
       </div>
 
-      <div class="panel" style="margin-top:12px;">
-        <h2>夫婦合計</h2>
+      <div class="sumPanel">
+        <h3>夫婦合計</h3>
         <div class="kv big">
           <div class="k">家計拠出 合計（夫 + 妻）</div>
           <div class="v" id="totalContrib">—</div>
@@ -308,7 +444,6 @@
 
       <div class="btnRow">
         <button id="copyBtn">LINE用フォーマットをコピー</button>
-        <div class="mono" id="urlPreview"></div>
       </div>
 
       <textarea id="out" readonly></textarea>
@@ -323,7 +458,9 @@
   function toNumber(s){
     if(!s) return null;
     let t = String(s).trim();
+    // 全角→半角
     t = t.replace(/[０-９]/g, c => String.fromCharCode(c.charCodeAt(0) - 0xFEE0));
+    // カンマ/円/空白除去
     t = t.replace(/[，,￥¥円\\s]/g, "");
     if(!t) return null;
     const n = Number(t);
@@ -349,6 +486,7 @@
     return { allowance: 70000, range: "400,001～（四捨五入後 " + fmtComma(r) + "）" };
   }
 
+  // ====== URL params ======
   function setQueryFromState(){
     const url = new URL(location.href);
     const net = toNumber(netEl.value);
@@ -360,7 +498,6 @@
     if(month == null) url.searchParams.delete("month"); else url.searchParams.set("month", String(Math.trunc(month)));
 
     history.replaceState(null, "", url);
-    urlPreview.textContent = url.pathname + url.search;
   }
 
   function initFromQuery(){
@@ -370,9 +507,9 @@
     const defaultYear = now.getFullYear();
     const defaultMonth = now.getMonth() + 1;
 
-    const qNet = p.get("net");
-    const qYear = p.get("year");
-    const qMonth = p.get("month");
+    const qNet = p.get("net");   // ?net=413088
+    const qYear = p.get("year"); // ?year=2026
+    const qMonth = p.get("month"); // ?month=1
 
     const y = qYear ? toNumber(qYear) : defaultYear;
     yearEl.value = (y != null) ? String(Math.trunc(y)) : String(defaultYear);
@@ -389,9 +526,10 @@
     setQueryFromState();
   }
 
+  // ====== Output ======
   function buildOutput(year, month, net, hAllowance, hContrib, totalContrib){
-    const ym = (year && month) ? (year + "年 " + month + "月") : "";
-    return `【お小遣い & 家計拠出】${ym ? "\\n\\n" + "▶ 対象：" + " " + ym : ""}
+    const ym = (year && month) ? `${year}年 ${month}月` : "";
+    return `【お小遣い & 家計拠出】${ym ? `\n▶ 対象：${ym}` : ""}
 
 ■ 妻：家計拠出（固定） ${yen(WIFE_FIXED_CONTRIB)}
 
@@ -409,6 +547,9 @@
     const month = toNumber(monthEl.value);
 
     if(net == null || net < 0){
+      // clear
+      heroAllowanceEl.textContent = "—";
+      heroContribEl.textContent = "—";
       hAllowanceEl.textContent = "—";
       hContribEl.textContent = "—";
       totalContribEl.textContent = "—";
@@ -423,17 +564,24 @@
     // 夫：家計拠出 = 手取り - お小遣い
     const hContrib = Math.max(0, net - allowance);
 
-    // 夫婦合計の家計拠出
+    // 夫婦合計
     const totalContrib = hContrib + WIFE_FIXED_CONTRIB;
 
+    // Hero
+    heroAllowanceEl.textContent = fmtComma(allowance);
+    heroContribEl.textContent = yen(hContrib);
+
+    // Panels
     hAllowanceEl.textContent = yen(allowance);
     hContribEl.textContent = yen(hContrib);
     totalContribEl.textContent = yen(totalContrib);
+
     rangePill.textContent = "夫レンジ判定：" + range;
 
+    // LINE output (fix: real newlines)
     outEl.value = buildOutput(year, month, net, allowance, hContrib, totalContrib);
 
-    // 入力整形
+    // prettify input
     netEl.value = fmtComma(net);
 
     setQueryFromState();
@@ -443,12 +591,16 @@
   const netEl = document.getElementById("net");
   const yearEl = document.getElementById("year");
   const monthEl = document.getElementById("month");
+
+  const rangePill = document.getElementById("rangePill");
+
+  const heroAllowanceEl = document.getElementById("heroAllowance");
+  const heroContribEl = document.getElementById("heroContrib");
+
   const outEl = document.getElementById("out");
   const hAllowanceEl = document.getElementById("hAllowance");
   const hContribEl = document.getElementById("hContrib");
   const totalContribEl = document.getElementById("totalContrib");
-  const rangePill = document.getElementById("rangePill");
-  const urlPreview = document.getElementById("urlPreview");
   const copyBtn = document.getElementById("copyBtn");
 
   // ====== Events ======
@@ -477,7 +629,7 @@
     }
   });
 
-  // 初回計算
+  // 初回
   recalc();
 </script>
 </body>
