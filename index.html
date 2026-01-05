@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>家計拠出 & お小遣い（夫レンジ制 / 妻固定）</title>
+  <title>家計拠出 & お小遣い（妻固定 / 夫レンジ）</title>
   <style>
     :root{
       --bg:#f6f4ef;
@@ -223,8 +223,8 @@
       <div>
         <h1>家計拠出 & お小遣い（妻固定 / 夫レンジ）</h1>
         <p class="sub">
-          妻：家計拠出 14万円固定。夫：手取りを入力するとレンジでお小遣いを決定し、残りを家計へ。<br>
-          <span class="badge">妻平均手取り 207,000円 → 平均お小遣い 67,000円</span>
+          妻：家計拠出 14万円固定。夫：手取りを入力 → レンジでお小遣い決定 → 残りを家計へ。<br>
+          <span class="badge">夫レンジは運用の納得感を優先（55k/60k/65k/70k）</span>
         </p>
       </div>
       <div class="pill" id="rangePill">夫レンジ判定：—</div>
@@ -260,8 +260,7 @@
         <div class="panel">
           <h2>夫（レンジ制）</h2>
           <p class="meta">
-            手取りを「千円単位で四捨五入」してレンジ判定。<br>
-            妻の平均お小遣い（67,000円）と“平均で揃う”ようにレンジを設計。
+            手取りを「千円単位で四捨五入」してレンジ判定。
           </p>
 
           <div class="kv big">
@@ -277,17 +276,16 @@
         <div class="panel">
           <h2>妻（固定拠出）</h2>
           <p class="meta">
-            家計：14万円固定。<br>
-            平均お小遣い：207,000 − 140,000 = 67,000円
+            家計：14万円固定（運用が分かりやすい方式）。
           </p>
 
           <div class="kv big">
-            <div class="k">妻のお小遣い（平均）</div>
-            <div class="v" id="wAvgPocket">67,000円</div>
-          </div>
-          <div class="kv">
             <div class="k">妻の家計拠出</div>
             <div class="v" id="wContrib">140,000円</div>
+          </div>
+          <div class="kv">
+            <div class="k">妻のお小遣い（当月）</div>
+            <div class="v" style="color:var(--muted)">（入力なし / 固定運用）</div>
           </div>
         </div>
       </div>
@@ -304,7 +302,7 @@
         <div>📌</div>
         <div>
           夫レンジ（四捨五入後の手取りで判定）：<br>
-          ～335,000 → 60,000 / 335,001～375,000 → 65,000 / 375,001～400,000 → 70,000 / 400,001～ → 75,000
+          ～335,000 → 55,000 / 335,001～375,000 → 60,000 / 375,001～400,000 → 65,000 / 400,001～ → 70,000
         </div>
       </div>
 
@@ -320,8 +318,6 @@
 <script>
   // ====== Constants ======
   const WIFE_FIXED_CONTRIB = 140000;
-  const WIFE_AVG_NET = 207000;
-  const WIFE_AVG_POCKET = WIFE_AVG_NET - WIFE_FIXED_CONTRIB; // 67000
 
   // ====== Helpers ======
   function toNumber(s){
@@ -343,14 +339,14 @@
     return Math.round(n / 1000) * 1000;
   }
 
-  // ====== Husband allowance (new ranges aligned to wife's avg pocket ~ 67,000) ======
+  // ====== Husband allowance (revised ranges) ======
   function calcHusbandAllowanceByRange(net){
     const r = roundToThousand(net);
 
-    if(r <= 335000) return { allowance: 60000, range: "～335,000（四捨五入後 " + fmtComma(r) + "）" };
-    if(r <= 375000) return { allowance: 65000, range: "335,001～375,000（四捨五入後 " + fmtComma(r) + "）" };
-    if(r <= 400000) return { allowance: 70000, range: "375,001～400,000（四捨五入後 " + fmtComma(r) + "）" };
-    return { allowance: 75000, range: "400,001～（四捨五入後 " + fmtComma(r) + "）" };
+    if(r <= 335000) return { allowance: 55000, range: "～335,000（四捨五入後 " + fmtComma(r) + "）" };
+    if(r <= 375000) return { allowance: 60000, range: "335,001～375,000（四捨五入後 " + fmtComma(r) + "）" };
+    if(r <= 400000) return { allowance: 65000, range: "375,001～400,000（四捨五入後 " + fmtComma(r) + "）" };
+    return { allowance: 70000, range: "400,001～（四捨五入後 " + fmtComma(r) + "）" };
   }
 
   function setQueryFromState(){
@@ -398,7 +394,6 @@
     return `【お小遣い & 家計拠出】${ym ? "\\n\\n" + "▶ 対象：" + " " + ym : ""}
 
 ■ 妻：家計拠出（固定） ${yen(WIFE_FIXED_CONTRIB)}
-（直近半年 平均手取り ${yen(WIFE_AVG_NET)} → 平均お小遣い ${yen(WIFE_AVG_POCKET)}）
 
 ■ 夫：当月手取り ${yen(net)}
 ・お小遣い ${yen(hAllowance)}
